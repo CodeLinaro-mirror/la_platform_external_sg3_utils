@@ -1,4 +1,4 @@
-.TH SG_MODES "8" "2026-05-01" "sg3_utils\-1.49" SG3_UTILS
+.TH SG_MODES "8" "2026-08-07" "sg3_utils\-1.49.5" SG3_UTILS
 .SH NAME
 sg_modes \- reads mode pages with SCSI MODE SENSE command
 .SH SYNOPSIS
@@ -213,8 +213,14 @@ increase level of verbosity. Can be used multiple times.
 \fB\-V\fR, \fB\-\-version\fR
 print out version string then exit.
 .SH NOTES
-If the normal sg_modes utility fails with "illegal command
-operation code" then try the '\-\-six' (or '\-6') option.
+If the normal sg_modes utility fails with "illegal command operation code"
+then try the '\-\-six' (or '\-6') option.
+.PP
+Some device (e.g. certain UFS devices) do not support block descriptors and
+give an "illegal request" sense code when the \fI\-\-dbd\fR option is
+.B not
+given. In some cases this utility will detect that and suggest the next
+invocation should include the \fI\-\-dbd\fR option.
 .PP
 This utility performs a SCSI INQUIRY command to determine the peripheral
 type of the device (e.g. 0 \-> Direct Access Device (disk)) prior to

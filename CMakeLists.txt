@@ -157,10 +157,12 @@ set(SG_LIB_OPENBSD 0)
 set(OS_SOLARIS 0)
 set(SG_LIB_SOLARIS 0)
 set(OS_AIX 0)
+set(OS_HAIKU 0)
 set(OS_WIN32 0)  # OS_WIN32_MINGW + OS_WIN32_CYGWIN only used in Makefile.am
 set(SG_LIB_WIN32 0)
 set(SG_LIB_MINGW 0)
 set(SG_LIB_CYGWIN 0)   # not used currently, may use in future
+set(OS_MACOS 0)
 
 set(NEED_GETOPT_H 1)
 if ( HAVE_GETOPT_H )

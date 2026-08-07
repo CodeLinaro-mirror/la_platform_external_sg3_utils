@@ -34,7 +34,7 @@
 #include "sg_unaligned.h"
 #include "sg_pr2serr.h"
 
-static const char * version_str = "1.81 20260530";
+static const char * version_str = "1.83 20260728";
 
 #define MY_NAME "sg_modes"
 
@@ -1522,9 +1522,13 @@ main(int argc, char * argv[])
         else if (op->page_control > 0)
             pr2serr("invalid field in cdb (perhaps page control (PC) not "
                     "supported)\n");
-        else
-            pr2serr("invalid field in cdb (perhaps page 0x%x not "
-                    "supported)\n", op->pg_code);
+        else {
+            pr2serr("invalid field in cdb (perhaps page ");
+            if ((PG_CODE_ALL == op->pg_code) && (! op->do_dbd))
+                pr2serr("0x3f not supported), try --dbd option\n");
+            else
+                pr2serr("0x%x not supported)\n", op->pg_code);
+        }
     } else if (res) {
         sg_get_category_sense_str(res, sizeof(b), b, vb);
         pr2serr("%s\n", b);

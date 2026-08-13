@@ -1,4 +1,4 @@
-.TH SG_LOGS "8" "May 2023" "sg3_utils\-1.48" SG3_UTILS
+.TH SG_LOGS "8" "2023-08-13" "sg3_utils\-1.49" SG3_UTILS
 .SH NAME
 sg_logs \- access log pages with SCSI LOG SENSE command
 .SH SYNOPSIS
@@ -325,7 +325,7 @@ This option may also be given together with \fI\-\-in=FN\fR in which case
 the contents of \fIFN\fR are interpreted as binary data (and the response is
 decoded as normal, not dumped as binary).
 .TP
-\fB\-R\fR, \fB\-\-readonly\fR
+\fB\-X\fR, \fB\-\-readonly\fR
 open the \fIDEVICE\fR read\-only (e.g. in Unix with the O_RDONLY flag). The
 default action is to try and open \fIDEVICE\fR read\-write then if that
 fails try to open again with read\-only. However when a read\-write open
@@ -569,9 +569,6 @@ sets the Parameter Pointer Control (PPC) bit. Default is 0 (i.e. cleared).
 use SCSI LOG SELECT command (PCR bit set) to reset the all log pages (or
 the given page). Equivalent to \fI\-\-reset\fR in the main description.
 .TP
-\fB\-R\fR
-Equivalent to \fI\-\-readonly\fR in the main description.
-.TP
 \fB\-select\fR
 use a LOG SELECT command. Equivalent to \fI\-\-select\fR in the main
 description.
@@ -597,6 +594,9 @@ print out version string then exit.
 \fB\-x\fR
 suppress the INQUIRY command. Equivalent to \fI\-\-no_inq\fR in the main
 description.
+.TP
+\fB\-X\fR
+Equivalent to \fI\-\-readonly\fR in the main description.
 .TP
 \fB\-?\fR
 output usage message then exit.

@@ -1,8 +1,6 @@
 /*
- * Copyright (c) 2005-2023 Douglas Gilbert.
+ * Copyright (c) 2005-2026 Douglas Gilbert.
  * All rights reserved.
- * Use of this source code is governed by a BSD-style
- * license that can be found in the BSD_LICENSE file.
  *
  * SPDX-License-Identifier: BSD-2-Clause
  */
@@ -39,7 +37,7 @@
  * vendor specific data is written.
  */
 
-static const char * version_str = "1.29 20230622";
+static const char * version_str = "1.30 20260821";
 
 #define DEF_DEFECT_LIST_FORMAT 4        /* bytes from index */
 
@@ -115,8 +113,8 @@ build_lba_arr(const char * inp, uint64_t * lba_arr,
     int in_len, k, j, m;
     const char * lcp;
     int64_t ll;
-    char * cp;
-    char * c2p;
+    const char * cp;
+    const char * c2p;
 
     if ((NULL == inp) || (NULL == lba_arr) ||
         (NULL == lba_arr_len))
@@ -193,8 +191,8 @@ build_lba_arr(const char * inp, uint64_t * lba_arr,
             ll = sg_get_llnum_nomult(lcp);
             if (-1 != ll) {
                 lba_arr[k] = (uint64_t)ll;
-                cp = (char *)strchr(lcp, ',');
-                c2p = (char *)strchr(lcp, ' ');
+                cp = strchr(lcp, ',');
+                c2p = strchr(lcp, ' ');
                 if (NULL == cp)
                     cp = c2p;
                 if (NULL == cp)

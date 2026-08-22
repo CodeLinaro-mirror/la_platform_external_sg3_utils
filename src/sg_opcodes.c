@@ -1,9 +1,5 @@
 /* A utility program originally written for the Linux OS SCSI subsystem.
  *  Copyright (C) 2004-2026 D. Gilbert
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
  *
  * SPDX-License-Identifier: GPL-2.0-or-later
  *
@@ -34,7 +30,7 @@
 
 #include "sg_pt.h"
 
-static const char * version_str = "1.06 20260725";    /* spc7r05 */
+static const char * version_str = "1.07 20260821";    /* spc7r05 */
 
 #define MY_NAME "sg_opcodes"
 
@@ -782,8 +778,8 @@ opcode_num_compare(const void * left, const void * right)
     int l_serv_act = 0;
     int r_serv_act = 0;
     int l_opc, r_opc;
-    const uint8_t * ll = *(uint8_t **)left;
-    const uint8_t * rr = *(uint8_t **)right;
+    const uint8_t * ll = *(const uint8_t * const *)left;
+    const uint8_t * rr = *(const uint8_t * const *)right;
 
     if (NULL == ll)
         return -1;
@@ -810,8 +806,8 @@ opcode_num_compare(const void * left, const void * right)
 static int
 opcode_alpha_compare(const void * left, const void * right)
 {
-    const uint8_t * ll = *(uint8_t **)left;
-    const uint8_t * rr = *(uint8_t **)right;
+    const uint8_t * ll = *(const uint8_t * const *)left;
+    const uint8_t * rr = *(const uint8_t * const *)right;
     int l_serv_act = 0;
     int r_serv_act = 0;
     char l_name_buff[NAME_BUFF_SZ];

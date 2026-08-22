@@ -94,7 +94,7 @@
 #include "sg_pr2serr.h"
 
 
-static const char * version_str = "5.98 20260715";
+static const char * version_str = "5.99 20260821";
 
 #define DEF_BLOCK_SIZE 512
 #define DEF_BLOCKS_PER_TRANSFER 128
@@ -1204,12 +1204,9 @@ sg_in_operation(struct opts_t * clp, Rq_elem * rep)
                 pr2serr(">> substituted zeros for in blk=%" PRId64 " for %d "
                         "bytes\n", rep->blk, rep->num_blks * rep->bs);
             }
-#if defined(__GNUC__)
-#if (__GNUC__ >= 7)
-            __attribute__((fallthrough));
-            /* FALL THROUGH */
-#endif
-#endif
+            // make intent crystal clear, even to compilers
+            goto fallthrough;
+fallthrough:
         case 0:
             status = pthread_mutex_lock(&clp->inout_mutex);
             if (0 != status) err_exit(status, "lock inout_mutex");
@@ -1224,7 +1221,9 @@ sg_in_operation(struct opts_t * clp, Rq_elem * rep)
         case SG_LIB_CAT_ILLEGAL_REQ:
             if (clp->verbose)
                 sg_print_command_len(rep->cdb, rep->cdbsz_in);
-            /* FALL THROUGH */
+            // make intent crystal clear, even to compilers
+            goto fallthrough2;
+fallthrough2:
         default:
             pr2serr("error finishing sg in command (%d)\n", res);
             if (exit_status <= 0)
@@ -1270,12 +1269,9 @@ sg_out_operation(struct opts_t * clp, Rq_elem * rep, bool bump_out_blk)
             } else
                 pr2serr(">> ignored error for out blk=%" PRId64 " for %d "
                         "bytes\n", rep->blk, rep->num_blks * rep->bs);
-#if defined(__GNUC__)
-#if (__GNUC__ >= 7)
-            __attribute__((fallthrough));
-            /* FALL THROUGH */
-#endif
-#endif
+            // make intent crystal clear, even to compilers
+            goto fallthrough;
+fallthrough:
         case 0:
             status = pthread_mutex_lock(&clp->inout_mutex);
             if (0 != status) err_exit(status, "lock inout_mutex");
@@ -1292,7 +1288,9 @@ sg_out_operation(struct opts_t * clp, Rq_elem * rep, bool bump_out_blk)
         case SG_LIB_CAT_ILLEGAL_REQ:
             if (clp->verbose)
                 sg_print_command_len(rep->cdb, rep->cdbsz_out);
-            /* FALL THROUGH */
+            // make intent crystal clear, even to compilers
+            goto fallthrough3;
+fallthrough3:
         default:
             rep->out_err = true;
             pr2serr("error finishing sg out command (%d)\n", res);
@@ -1658,7 +1656,7 @@ main(int argc, char * argv[])
     void * vp;
     struct opts_t * clp = &my_opts;
     char ebuff[EBUFF_SZ];
-#if SG_LIB_ANDROID
+#ifdef SG_LIB_ANDROID
     struct sigaction actions;
 
     memset(&actions, 0, sizeof(actions));
@@ -2243,7 +2241,7 @@ degen:
     }
 
 #if 0
-#if SG_LIB_ANDROID
+#ifdef SG_LIB_ANDROID
     /* Android doesn't have pthread_cancel() so use pthread_kill() instead.
      * Also there is no need to link with -lpthread in Android */
     status = pthread_kill(sig_listen_thread_id, SIGUSR1);

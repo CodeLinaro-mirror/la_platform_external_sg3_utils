@@ -27,11 +27,11 @@
 #include "sg_pr2serr.h"
 #include "sg_pr2serr.h"
 
-#if (HAVE_NVME && (! IGNORE_NVME))
+#if (defined(HAVE_NVME) && (! defined(IGNORE_NVME)))
 #include "sg_nvme.h"
 #endif
 
-static const char * scsi_pt_version_str = "3.21 20231123";
+static const char * scsi_pt_version_str = "3.22 20260818";
 
 /* List of external functions that need to be defined for each OS are
  * listed at the top of sg_pt_dummy.c   */

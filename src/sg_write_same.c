@@ -31,7 +31,7 @@
 #include "sg_unaligned.h"
 #include "sg_pr2serr.h"
 
-static const char * version_str = "1.37 20260620";
+static const char * version_str = "1.38 20260821";
 
 
 #define ME "sg_write_same: "
@@ -269,7 +269,7 @@ do_write_same(int sg_fd, const struct opts_t * op, const void * dataoutp,
     }
     set_scsi_pt_cdb(ptvp, ws_cdb, cdb_len);
     set_scsi_pt_sense(ptvp, sense_b, sizeof(sense_b));
-    set_scsi_pt_data_out(ptvp, (uint8_t *)dataoutp, op->xfer_len);
+    set_scsi_pt_data_out(ptvp, (const uint8_t *)dataoutp, op->xfer_len);
     res = do_scsi_pt(ptvp, sg_fd, op->timeout, op->verbose);
     ret = sg_cmds_process_resp(ptvp, "Write same", res, true /*noisy */,
                                op->verbose, &sense_cat);
@@ -301,7 +301,9 @@ do_write_same(int sg_fd, const struct opts_t * op, const void * dataoutp,
         case SG_LIB_CAT_ILLEGAL_REQ:
             if (op->verbose)
                 sg_print_command_len(ws_cdb, cdb_len);
-            /* FALL THROUGH */
+            // make intent crystal clear, even to compilers
+            goto fallthrough;
+fallthrough:
         default:
             ret = sense_cat;
             break;

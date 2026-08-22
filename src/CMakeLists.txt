@@ -6,7 +6,8 @@ if ( PT_DUMMY )
 endif ( PT_DUMMY )
 
 if ( BUILD_SHARED_LIBS )
-    MESSAGE( STATUS ">> Build utilities based on sgutils2 library (default)" )
+    MESSAGE( STATUS
+             ">> Build uses sgutils2 library (searching in ../lib first)" )
 else ( BUILD_SHARED_LIBS )
     MESSAGE( STATUS ">> Build static utilities" )
     add_definitions ( -static )
@@ -21,17 +22,12 @@ function(build_one util_name source_files)
         add_executable( ${util_name} ${source_files} )
     endif ( )
 
-    # For testing it can be useful to compile C code with a C++ compiler. 
-    # That can be done by uncommenting the following line:
-    # set_source_files_properties( ${util_name} PROPERTIES LANGUAGE CXX )
+    # For testing it can be useful to compile C code with a C++ compiler. That
+    # can be done by uncommenting the following line:
+    ## set_source_files_properties( ${util_name} PROPERTIES LANGUAGE CXX )
+    my_language_choice( "${source_files}" )
 
-    if ( ENABLE_DEBUG )
-        target_compile_definitions(${util_name} PRIVATE DEBUG)
-        target_compile_options(${util_name} PRIVATE
-            -Wextra -Wmisleading-indentation -Wduplicated-cond -Wlogical-op
-            -Wnull-dereference -Wshadow -Wunused -Wsizeof-array-argument
-            -Wduplicated-branches -Wjump-misses-init -Wparentheses)
-    endif ( ENABLE_DEBUG )
+    set_compile_options ( ${util_name} )
 
     target_include_directories(${util_name} PRIVATE ${CMAKE_BINARY_DIR})
     target_include_directories(${util_name} PUBLIC ${CMAKE_SOURCE_DIR}/include)

@@ -45,7 +45,7 @@
  * related to snprintf().
  */
 
-static const char * version_str = "1.22 20260621";
+static const char * version_str = "1.23 20260813";
 
 
 #define MY_NAME "tst_sg_lib"
@@ -620,15 +620,15 @@ main(int argc, char * argv[])
         }
     }
     if (do_unaligned) {         /* --unaligned */
-        uint16_t u16 = 0x55aa;
-        uint16_t u16r;
-        uint32_t u24 = 0x224488;
+        const uint16_t u16 = 0x55aa;
+        uint16_t u16r;          /* result */
+        const uint32_t u24 = 0x224488;
         uint32_t u24r;
-        uint32_t u32 = 0x224488aa;
+        const uint32_t u32 = 0x224488aa;
         uint32_t u32r;
-        uint64_t u48 = 0x112233445566ULL;
+        const uint64_t u48 = 0x112233445566ULL;
         uint64_t u48r;
-        uint64_t u64 = 0x1122334455667788ULL;
+        const uint64_t u64 = 0x1122334455667788ULL;
         uint64_t u64r;
         uint8_t u8[64];
 

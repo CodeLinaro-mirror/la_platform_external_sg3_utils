@@ -42,7 +42,7 @@
 #include "sg_snt.h"
 #include "sg_pr2serr.h"
 
-#if (HAVE_NVME && (! IGNORE_NVME))
+#if (defined(HAVE_NVME) && (! defined(IGNORE_NVME)))
 #include "freebsd_nvme_ioctl.h"
 #else
 #define NVME_CTRLR_PREFIX   "/dev/nvme"
@@ -124,7 +124,7 @@ struct sg_pt_base {
 
 // static const uint32_t broadcast_nsid = SG_NVME_BROADCAST_NSID;
 
-#if (HAVE_NVME && (! IGNORE_NVME))
+#if (defined(HAVE_NVME) && (! defined(IGNORE_NVME)))
 static int sg_do_nvme_pt(struct sg_pt_freebsd_scsi * ptp, int fd,
                          bool is_admin, int timeout_secs, int vb);
 #endif
@@ -528,7 +528,7 @@ check_pt_file_handle(int device_han, const char * device_name, int vb)
     }
 }
 
-#if (HAVE_NVME && (! IGNORE_NVME))
+#if (defined(HAVE_NVME) && (! defined(IGNORE_NVME)))
 static bool checked_ev_dsense = false;
 static bool ev_dsense = false;
 #endif
@@ -549,7 +549,7 @@ construct_scsi_pt_obj_with_fd(int dev_han, int vb)
             fdc_p = get_fdc_p(ptp);
             if (fdc_p) {
                 ptp->mchanp = fdc_p;
-#if (HAVE_NVME && (! IGNORE_NVME))
+#if (defined(HAVE_NVME) && (! defined(IGNORE_NVME)))
                 sg_snt_init_dev_stat(&fdc_p->dev_stat);
                 if (! checked_ev_dsense) {
                     ev_dsense = sg_get_initial_dsense();
@@ -865,7 +865,7 @@ do_scsi_pt(struct sg_pt_base * vp, int dev_han, int time_secs, int vb)
         }
         ptp->mchanp = fdc_p;
     }
-#if (HAVE_NVME && (! IGNORE_NVME))
+#if (defined(HAVE_NVME) && (! defined(IGNORE_NVME)))
     if (fdc_p->is_nvme_dev)
         return sg_do_nvme_pt(ptp, -1, true /* assume Admin */, time_secs, vb);
 #endif
@@ -1266,7 +1266,7 @@ get_scsi_pt_os_err_str(const struct sg_pt_base * vp, int max_b_len, char * b)
 
 #define SG_NVME_RW_CDW12_FUA (1 << 30) /* Force Unit Access bit */
 
-#if (HAVE_NVME && (! IGNORE_NVME))
+#if (defined(HAVE_NVME) && (! defined(IGNORE_NVME)))
 
 static void
 mk_sense_asc_ascq(struct sg_pt_freebsd_scsi * ptp, int sk, int asc, int ascq,
@@ -3106,10 +3106,10 @@ fini:
     return sct_sc ? SG_LIB_NVME_STATUS : 0;
 }
 
-#endif          /* (HAVE_NVME && (! IGNORE_NVME)) */
+#endif          /* (defined(HAVE_NVME) && (! defined(IGNORE_NVME))) */
 
 
-#if (HAVE_NVME && (! IGNORE_NVME))
+#if (defined(HAVE_NVME) && (! defined(IGNORE_NVME)))
 
 /* Requires pass-through file to be open and associated with vp */
 int
@@ -3134,7 +3134,7 @@ do_nvm_pt(struct sg_pt_base * vp, int submq, int timeout_secs, int vb)
     return sg_do_nvme_pt(ptp, -1, false, timeout_secs, vb);
 }
 
-#else           /* (HAVE_NVME && (! IGNORE_NVME)) */
+#else           /* (defined(HAVE_NVME) && (! defined(IGNORE_NVME))) */
 
 int
 do_nvm_pt(struct sg_pt_base * vp, int submq, int timeout_secs, int vb)
@@ -3163,4 +3163,4 @@ do_nvm_pt(struct sg_pt_base * vp, int submq, int timeout_secs, int vb)
     return SCSI_PT_DO_NOT_SUPPORTED;
 }
 
-#endif          /* (HAVE_NVME && (! IGNORE_NVME)) */
+#endif          /* (defined(HAVE_NVME) && (! defined(IGNORE_NVME))) */

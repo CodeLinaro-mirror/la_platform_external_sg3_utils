@@ -168,7 +168,7 @@ sg_get_command_str(const uint8_t * cdbp, int sz, bool cmd_name, int blen,
     if ((b == NULL) || (blen < 1))
         return b;
     else if ((cdbp == NULL) || (sz < 1)) {
-        snprintf(b, blen, "<empty>");
+        snprintf(b, (size_t)blen, "<empty>");
         return b;
     }
     if (cmd_name && (blen > 16)) {
@@ -373,6 +373,7 @@ sg_get_additional_sense_str(int asc, int ascq, bool add_sense_leadin,
             else
                 num = 0;
             rlen = buff_len - num;
+            /* N.B. ei2p->text contains %x so following is safe */
             sg_scnpr(buff + num, ((rlen > 0) ? rlen : 0), ei2p->text, ascq);
         }
     }
@@ -3348,7 +3349,7 @@ sg_get_num(const char * buf)
     bool is_hex = false;
     int res, num, n, len;
     unsigned int unum;
-    char * cp;
+    const char * cp;
     const char * b;
     const char * b2p;
     char c = 'c';
@@ -3367,7 +3368,8 @@ sg_get_num(const char * buf)
         len -= n;
     }
     /* following hack to keep C++ happy */
-    cp = strpbrk((char *)buf, " \t,#-");
+    // cp = strpbrk((char *)buf, " \t,#-");
+    cp = strpbrk(buf, " \t,#-");
     if (cp) {
         len = cp - buf;
         n = (int)sizeof(lb) - 1;
@@ -3438,9 +3440,9 @@ sg_get_num(const char * buf)
             return -1;
         case 'X':       /* experimental: multiplication */
             /* left argument must end with hexadecimal digit */
-            cp = (char *)strchr(b2p, 'x');
+            cp = strchr(b2p, 'x');
             if (NULL == cp)
-                cp = (char *)strchr(b2p, 'X');
+                cp = strchr(b2p, 'X');
             if (cp) {
                 n = sg_get_num(cp + 1);
                 if (-1 != n)
@@ -3449,7 +3451,7 @@ sg_get_num(const char * buf)
             return -1;
         case '+':       /* experimental: addition */
             /* left argument must end with hexadecimal digit */
-            cp = (char *)strchr(b2p, '+');
+            cp = strchr(b2p, '+');
             if (cp) {
                 n = sg_get_num(cp + 1);
                 if (-1 != n)
@@ -3472,12 +3474,12 @@ sg_get_num_nomult(const char * buf)
 {
     int res, len, num;
     unsigned int unum;
-    char * commap;
+    const char * commap;
 
     if ((NULL == buf) || ('\0' == buf[0]))
         return -1;
     len = strlen(buf);
-    commap = (char *)strchr(buf + 1, ',');
+    commap = strchr(buf + 1, ',');
     if (('0' == buf[0]) && (('x' == buf[1]) || ('X' == buf[1]))) {
         res = sscanf(buf + 2, "%x", &unum);
         num = unum;
@@ -3511,7 +3513,7 @@ sg_get_llnum(const char * buf)
     int res, len, n;
     int64_t num, ll;
     uint64_t unum;
-    char * cp;
+    const char * cp;
     const char * b;
     const char * b2p;
     char c = 'c';
@@ -3530,7 +3532,7 @@ sg_get_llnum(const char * buf)
         len -= n;
     }
     /* following cast hack to keep C++ happy */
-    cp = strpbrk((char *)buf, " \t,#-");
+    cp = strpbrk(buf, " \t,#-");
     if (cp) {
         len = cp - buf;
         n = (int)sizeof(lb) - 1;
@@ -3624,9 +3626,9 @@ sg_get_llnum(const char * buf)
                 return num * 1099511627776LL * 1024 * 1024;
             return -1LL;
         case 'X':       /* experimental: decimal (left arg) multiplication */
-            cp = (char *)strchr(b2p, 'x');
+            cp = strchr(b2p, 'x');
             if (NULL == cp)
-                cp = (char *)strchr(b2p, 'X');
+                cp = strchr(b2p, 'X');
             if (cp) {
                 ll = sg_get_llnum(cp + 1);
                 if (-1LL != ll)
@@ -3634,7 +3636,7 @@ sg_get_llnum(const char * buf)
             }
             return -1LL;
         case '+':       /* experimental: decimal (left arg) addition */
-            cp = (char *)strchr(b2p, '+');
+            cp = strchr(b2p, '+');
             if (cp) {
                 ll = sg_get_llnum(cp + 1);
                 if (-1LL != ll)

@@ -1,8 +1,6 @@
 /*
- * Copyright (c) 2017-2023 Douglas Gilbert.
+ * Copyright (c) 2017-2026 Douglas Gilbert.
  * All rights reserved.
- * Use of this source code is governed by a BSD-style
- * license that can be found in the BSD_LICENSE file.
  *
  * SPDX-License-Identifier: BSD-2-Clause
  *
@@ -38,7 +36,7 @@
 #include "sg_unaligned.h"
 #include "sg_pr2serr.h"
 
-static const char * version_str = "1.36 20231201";
+static const char * version_str = "1.37 20260821";
 
 static const char * my_name = "sg_write_x: ";
 
@@ -541,8 +539,8 @@ build_lba_arr(const char * inp, uint64_t * lba_arr, uint32_t * lba_arr_len,
     int in_len, k;
     int64_t ll;
     const char * lcp;
-    char * cp;
-    char * c2p;
+    const char * cp;
+    const char * c2p;
 
     if ((NULL == inp) || (NULL == lba_arr) ||
         (NULL == lba_arr_len))
@@ -564,8 +562,8 @@ build_lba_arr(const char * inp, uint64_t * lba_arr, uint32_t * lba_arr_len,
             ll = sg_get_llnum(lcp);
             if (-1 != ll) {
                 lba_arr[k] = (uint64_t)ll;
-                cp = (char *)strchr(lcp, ',');
-                c2p = (char *)strchr(lcp, ' ');
+                cp = strchr(lcp, ',');
+                c2p = strchr(lcp, ' ');
                 if (NULL == cp)
                     cp = c2p;
                 if (NULL == cp)
@@ -599,8 +597,8 @@ build_num_arr(const char * inp, uint32_t * num_arr, uint32_t * num_arr_len,
     int in_len, k;
     const char * lcp;
     int64_t ll;
-    char * cp;
-    char * c2p;
+    const char * cp;
+    const char * c2p;
 
     if ((NULL == inp) || (NULL == num_arr) ||
         (NULL == num_arr_len))
@@ -627,8 +625,8 @@ build_num_arr(const char * inp, uint32_t * num_arr, uint32_t * num_arr_len,
                     return SG_LIB_SYNTAX_ERROR;
                 }
                 num_arr[k] = (uint32_t)ll;
-                cp = (char *)strchr(lcp, ',');
-                c2p = (char *)strchr(lcp, ' ');
+                cp = strchr(lcp, ',');
+                c2p = strchr(lcp, ' ');
                 if (NULL == cp)
                     cp = c2p;
                 if (NULL == cp)
@@ -1325,7 +1323,7 @@ do_write_x(int sg_fd, const void * dataoutp, int dout_len,
     set_scsi_pt_cdb(ptvp, x_cdb, cdb_len);
     set_scsi_pt_sense(ptvp, sense_b, sizeof(sense_b));
     if (dout_len > 0)
-        set_scsi_pt_data_out(ptvp, (uint8_t *)dataoutp, dout_len);
+        set_scsi_pt_data_out(ptvp, (const uint8_t *)dataoutp, dout_len);
     else if (vb && (! op->ndob))
         pr2serr("%s:  dout_len==0, so empty dout buffer\n",
                 op->cdb_name);
@@ -1401,6 +1399,7 @@ do_read_capacity(int sg_fd, struct opts_t *op)
     int vb = op->verbose;
     char b[80];
     uint8_t resp_buff[RCAP16_RESP_LEN];
+    static const int b_len = sizeof(b);
 
     res = sg_ll_readcap_16(sg_fd, false /* pmi */, 0 /* llba */, resp_buff,
                            RCAP16_RESP_LEN, true, (vb ? (vb - 1): 0));
@@ -1478,7 +1477,7 @@ do_read_capacity(int sg_fd, struct opts_t *op)
             op->tot_lbs = sg_get_unaligned_be32(resp_buff + 0) + 1;
             op->bs = sg_get_unaligned_be32(resp_buff + 4);
         } else {
-            strcpy(b,"OS error");
+            sg_strscpy(b, "OS error", b_len);
             if (res > 0)
                 sg_get_category_sense_str(res, sizeof(b), b, vb);
             else
@@ -1489,7 +1488,7 @@ do_read_capacity(int sg_fd, struct opts_t *op)
         }
     } else {
         if (vb) {
-            strcpy(b,"OS error");
+            sg_strscpy(b, "OS error", b_len);
             if (res > 0)
                 sg_get_category_sense_str(res, sizeof(b), b, vb);
             pr2serr("Read capacity(16): %s\n", b);
@@ -1841,6 +1840,7 @@ process_scattered(int sg_fd, int infd, uint32_t if_len, uint32_t if_rlen,
     uint8_t * up = NULL;
     uint8_t * free_up = NULL;
     char b[80];
+    static const int b_len = sizeof(b);
 
     if (op->do_combined) {      /* --combined=DOF (.scat_lbdof) */
         if (op->scat_lbdof > 0)
@@ -2144,7 +2144,7 @@ process_scattered(int sg_fd, int infd, uint32_t if_len, uint32_t if_rlen,
 do_io:
     ret = do_write_x(sg_fd, up, do_len, op);
     if (ret) {
-        strcpy(b,"OS error");
+        sg_strscpy(b, "OS error", b_len);
         if (ret > 0)
             sg_get_category_sense_str(ret, sizeof(b), b, vb);
         pr2serr("%s: %s\n", op->cdb_name, b);
@@ -2195,6 +2195,7 @@ main(int argc, char * argv[])
     uint32_t num_arr[MAX_NUM_ADDR];
     struct stat if_stat, sf_stat;
     struct opts_t opts SG_C_CPP_ZERO_INIT;
+    static const int b_len = sizeof(b);
 
     op = &opts;
     memset(&if_stat, 0, sizeof(if_stat));
@@ -2627,7 +2628,7 @@ main(int argc, char * argv[])
 
     ret = do_write_x(sg_fd, up, do_len, op);
     if (ret && (! op->do_quiet)) {
-        strcpy(b,"OS error");
+        sg_strscpy(b, "OS error", b_len);
         if (ret > 0)
             sg_get_category_sense_str(ret, sizeof(b), b, vb);
         pr2serr("%s: %s\n", op->cdb_name, b);

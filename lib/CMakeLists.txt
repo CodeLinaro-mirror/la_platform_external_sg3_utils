@@ -56,10 +56,6 @@ set ( sgutils2_lib_common
 	sg_snt.c
 )
 
-# For testing it can be useful to compile C code with a C++ compiler. That
-# can be done by uncommenting the following line:
-# set_source_files_properties( ${sgutils2_lib_common} ${sgutils2_lib_hal} PROPERTIES LANGUAGE CXX )
-
 if ( BUILD_SHARED_LIBS )
     if ( DISABLE_LIBSGUTILS )
         MESSAGE( STATUS ">> Build sgutils2 library static, otherwise use shared library(s)" )
@@ -77,16 +73,18 @@ else ( BUILD_SHARED_LIBS )
     add_library(sgutils2 STATIC ${sgutils2_lib_common} ${sgutils2_lib_hal} )
 endif ( BUILD_SHARED_LIBS )
 
-if ( ENABLE_DEBUG )
-    MESSAGE( STATUS ">> Compile lib/ with DEBUG set" )
+# my_language_choice() is a function defined in the parent CMakeLists.txt
+# and takes a list of files to be compiled. It optionally calls
+#    set_source_files_properties(${it} PROPERTIES LANGUAGE CXX)
+# if the intent is to compile this C code with a C++ compiler. That is
+# primarily for more advanced code sanity checking in C++. The usual case
+# is to compile with a C compiler in which case this function does nothing.
+# First we need to build a list of files to be compiled:
+set ( compile_list ${sgutils2_lib_common} )
+list ( APPEND compile_list ${sgutils2_lib_hal} )
+my_language_choice( "${compile_list}" )
 
-    target_compile_definitions(sgutils2 PRIVATE DEBUG)
-    target_compile_options(sgutils2 PRIVATE
-        -Wextra -Wmisleading-indentation -Wduplicated-cond -Wlogical-op
-        -Wnull-dereference -Wshadow -Wunused -Wsizeof-array-argument
-        -Wduplicated-branches -Wjump-misses-init -Wparentheses)
-endif ( ENABLE_DEBUG )
-
+set_compile_options ( sgutils2 )
 
 target_include_directories(sgutils2
     PUBLIC

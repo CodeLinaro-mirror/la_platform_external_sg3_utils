@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2023 Douglas Gilbert.
+ * Copyright (c) 2011-2026 Douglas Gilbert.
  * All rights reserved.
  * Use of this source code is governed by a BSD-style
  * license that can be found in the BSD_LICENSE file.
@@ -33,7 +33,7 @@
 #include "sg_unaligned.h"
 #include "sg_pr2serr.h"
 
-static const char * version_str = "1.22 20230622";
+static const char * version_str = "1.23 20260821";
 
 #define ME "sg_sanitize: "
 
@@ -230,7 +230,7 @@ do_sanitize(int sg_fd, const struct opts_t * op, const void * param_lstp,
     }
     set_scsi_pt_cdb(ptvp, san_cdb, sizeof(san_cdb));
     set_scsi_pt_sense(ptvp, sense_b, sizeof(sense_b));
-    set_scsi_pt_data_out(ptvp, (uint8_t *)param_lstp, param_lst_len);
+    set_scsi_pt_data_out(ptvp, (const uint8_t *)param_lstp, param_lst_len);
     res = do_scsi_pt(ptvp, sg_fd, timeout, op->verbose);
     ret = sg_cmds_process_resp(ptvp, "Sanitize", res, true /*noisy */,
                                op->verbose, &sense_cat);

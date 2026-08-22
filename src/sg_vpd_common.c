@@ -1771,6 +1771,7 @@ decode_block_dev_ch_vpd(const uint8_t * buff, int len, struct opts_t * op,
     static const char * mrr_h = "Medium rotation rate";
     static const char * nrm = "Non-rotating medium (e.g. solid state)";
     static const char * pt_j = "product_type";
+    static const int b_len = sizeof(b);
 
     if (op->do_hex > 0) {
         if (op->do_hex > 2)
@@ -1816,25 +1817,25 @@ decode_block_dev_ch_vpd(const uint8_t * buff, int len, struct opts_t * op,
     u = buff[7] & 0xf;
     switch (u) {
     case 0:
-        strcpy(b, nr_s);
+        sg_strscpy(b, nr_s, b_len);
         break;
     case 1:
-        strcpy(b, "5.25 inch");
+        sg_strscpy(b, "5.25 inch", b_len);
         break;
     case 2:
-        strcpy(b, "3.5 inch");
+        sg_strscpy(b, "3.5 inch", b_len);
         break;
     case 3:
-        strcpy(b, "2.5 inch");
+        sg_strscpy(b, "2.5 inch", b_len);
         break;
     case 4:
-        strcpy(b, "1.8 inch");
+        sg_strscpy(b, "1.8 inch", b_len);
         break;
     case 5:
-        strcpy(b, "less then 1.8 inch");
+        sg_strscpy(b, "less then 1.8 inch", b_len);
         break;
     default:
-        strcpy(b, rsv_s);
+        sg_strscpy(b, rsv_s, b_len);
         break;
     }
     sgj_pr_hr(jsp, "  Nominal form factor: %s\n", b);
@@ -1943,7 +1944,7 @@ decode_block_lb_prov_vpd(const uint8_t * buff, int len, struct opts_t * op,
     sgj_pr_hr(jsp, "  Provisioning type: %s%s\n", cp, b);
     sgj_js_nv_ihexstr(jsp, jop, "provisioning_type", pt, NULL, cp);
     u = buff[7];        /* threshold percentage */
-    strcpy(b, tp);
+    sg_strscpy(b, tp, blen);
     if (0 == u)
         sgj_pr_hr(jsp, "  %s: 0 [percentages %s]\n", b, ns_s);
     else
@@ -1987,7 +1988,7 @@ decode_referrals_vpd(const uint8_t * buff, int len, struct opts_t * op,
         return;
     }
     u = sg_get_unaligned_be32(buff + 8);
-    strcpy(b, "  User data segment size: ");
+    sg_strscpy(b, "  User data segment size: ", sizeof(b));
     if (0 == u)
         sgj_pr_hr(jsp, "%s0 [per sense descriptor]\n", b);
     else
@@ -2089,7 +2090,7 @@ decode_cap_prod_id_vpd(const uint8_t * buff, int len, struct opts_t * op,
         if (n > 0)
             snprintf(b, blen, "%.*s", n, (const char *)bp + 8);
         else
-            strcpy(b, "<empty>");
+            sg_strscpy(b, "<empty>", sizeof(b));
         sgj_haj_vs(jsp, jo2p, 2, "Product identification",
                    SGJ_SEP_COLON_1_SPACE, b);
         sgj_js_nv_o(jsp, jap, NULL /* name */, jo2p);
@@ -2221,18 +2222,18 @@ decode_zbdch_vpd(const uint8_t * buff, int len, struct opts_t * op,
     switch (u) {
     case 0:
         if (PDT_ZBC == (PDT_MASK & buff[0]))
-            strcpy(b, "host managed zoned block device");
+            sg_strscpy(b, "host managed zoned block device", blen);
         else
-            strcpy(b, nr_s);
+            sg_strscpy(b, nr_s, blen);
         break;
     case 1:     /* obsolete: zbc3r02 */
-        strcpy(b, "host aware zoned block device model");
+        sg_strscpy(b, "host aware zoned block device model", blen);
         break;
     case 2:
-        strcpy(b, "Domains and realms zoned block device model");
+        sg_strscpy(b, "Domains and realms zoned block device model", blen);
         break;
     default:
-        strcpy(b, rsv_s);
+        sg_strscpy(b, rsv_s, blen);
         break;
     }
     sgj_haj_vistr(jsp, jop, 2, "Zoned block device extension",
@@ -2261,17 +2262,18 @@ decode_zbdch_vpd(const uint8_t * buff, int len, struct opts_t * op,
     u = buff[23] & 0xf;
     switch (u) {
     case 0:
-        strcpy(b, nr_s);
+        sg_strscpy(b, nr_s, blen);
         break;
     case 1:
-        strcpy(b, "Zoned starting LBAs aligned using constant zone lengths");
+        sg_strscpy(b, "Zoned starting LBAs aligned using constant zone "
+                   "lengths", blen);
         break;
     case 0x8:
-        strcpy(b, "Zoned starting LBAs potentially non-constant (as "
-                 "reported by REPORT ZONES)");
+        sg_strscpy(b, "Zoned starting LBAs potentially non-constant (as "
+                   "reported by REPORT ZONES)", blen);
         break;
     default:
-        strcpy(b, rsv_s);
+        sg_strscpy(b, rsv_s, blen);
         break;
     }
     sgj_haj_vistr(jsp, jop, 2, "Zoned alignment method",
@@ -2349,16 +2351,16 @@ get_zone_align_method(uint8_t val, char * b, int blen)
         return b;
    switch (val) {
     case 0:
-        strcpy(b, nr_s);
+        sg_strscpy(b, nr_s, blen);
         break;
     case 1:
-        strcpy(b, "using constant zone lengths");
+        sg_strscpy(b, "using constant zone lengths", blen);
         break;
     case 8:
-        strcpy(b, "taking gap zones into account");
+        sg_strscpy(b, "taking gap zones into account", blen);
         break;
     default:
-        strcpy(b, rsv_s);
+        sg_strscpy(b, rsv_s, blen);
         break;
     }
     return b;
@@ -2410,7 +2412,7 @@ decode_format_presets_vpd(const uint8_t * buff, int len, struct opts_t * op,
             else
                 snprintf(b, blen, "%s", cp);
         } else
-            strcpy(b, rsv_s);
+            sg_strscpy(b, rsv_s, blen);
         sgj_haj_vistr(jsp, jo2p, 4, "Schema type", SGJ_SEP_COLON_1_SPACE,
                       sch_type, true, b);
         sgj_haj_vi(jsp, jo2p, 4, "Logical blocks per physical block "

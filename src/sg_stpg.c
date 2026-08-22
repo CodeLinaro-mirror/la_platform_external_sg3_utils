@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2023 Hannes Reinecke, Christophe Varoqui, Douglas Gilbert
+ * Copyright (c) 2004-2026 Hannes Reinecke, Christophe Varoqui, Douglas Gilbert
  * All rights reserved.
  * Use of this source code is governed by a BSD-style
  * license that can be found in the BSD_LICENSE file.
@@ -34,7 +34,7 @@
  * to the given SCSI device.
  */
 
-static const char * version_str = "1.23 20230623";
+static const char * version_str = "1.24 20260821";
 
 #define TGT_GRP_BUFF_LEN 1024
 #define MX_ALLOC_LEN (0xc000 + 0x80)
@@ -293,7 +293,7 @@ build_port_arr(const char * inp, int * port_arr, int * port_arr_len,
     int in_len, k;
     const char * lcp;
     int v;
-    char * cp;
+    const char * cp;
 
     if ((NULL == inp) || (NULL == port_arr) ||
         (NULL == port_arr_len))
@@ -311,7 +311,7 @@ build_port_arr(const char * inp, int * port_arr, int * port_arr_len,
         v = sg_get_num_nomult(lcp);
         if (-1 != v) {
             port_arr[k] = v;
-            cp = (char *)strchr(lcp, ',');
+            cp = strchr(lcp, ',');
             if (NULL == cp)
                 break;
             lcp = cp + 1;
@@ -340,7 +340,7 @@ build_state_arr(const char * inp, int * state_arr, int * state_arr_len,
     bool try_num;
     int in_len, k, v;
     const char * lcp;
-    char * cp;
+    const char * cp;
 
     if ((NULL == inp) || (NULL == state_arr) ||
         (NULL == state_arr_len))
@@ -395,7 +395,7 @@ build_state_arr(const char * inp, int * state_arr, int * state_arr_len,
                 return SG_LIB_SYNTAX_ERROR;
             }
         }
-        cp = (char *)strchr(lcp, ',');
+        cp = strchr(lcp, ',');
         if (NULL == cp)
             break;
         lcp = cp + 1;

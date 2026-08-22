@@ -1,6 +1,6 @@
 /*
  * A utility program originally written for the Linux OS SCSI subsystem
- *    Copyright (C) 2003-2023 D. Gilbert
+ *    Copyright (C) 2003-2026 D. Gilbert
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2, or (at your option)
@@ -27,7 +27,7 @@
 #include "sg_lib.h"
 #include "sg_cmds_basic.h"
 #include "sg_cmds_extra.h"
-#if SG_LIB_WIN32
+#ifdef SG_LIB_WIN32
 #include "sg_pt.h"      /* needed for scsi_pt_win32_direct() */
 #endif
 #include "sg_unaligned.h"
@@ -477,8 +477,8 @@ build_diag_page(const char * inp, uint8_t * mp_arr, int * mp_arr_len,
     int in_len, k, j, m;
     unsigned int h;
     const char * lcp;
-    char * cp;
-    char * c2p;
+    const char * cp;
+    const char * c2p;
 
     if ((NULL == inp) || (NULL == mp_arr) ||
         (NULL == mp_arr_len))
@@ -591,8 +591,8 @@ build_diag_page(const char * inp, uint8_t * mp_arr, int * mp_arr_len,
                     return 1;
                 }
                 mp_arr[k] = h;
-                cp = (char *)strchr(lcp, ',');
-                c2p = (char *)strchr(lcp, ' ');
+                cp = strchr(lcp, ',');
+                c2p = strchr(lcp, ' ');
                 if (NULL == cp)
                     cp = c2p;
                 if (NULL == cp)

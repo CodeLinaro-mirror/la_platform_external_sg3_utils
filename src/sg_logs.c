@@ -1,5 +1,5 @@
 /* A utility program originally written for the Linux OS SCSI subsystem.
- *  Copyright (C) 2000-2023 D. Gilbert
+ *  Copyright (C) 2000-2026 D. Gilbert
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2, or (at your option)
@@ -1364,17 +1364,26 @@ old_parse_cmd_line(struct opts_t * op, int argc, char * argv[])
                 const struct log_elem * lep;
 
                 if (isalpha((uint8_t)ccp[0])) {
-                    char * xp;
+                    int j;
+                    char * xp = NULL;
                     char b[80];
+                    static const int b_len = sizeof(b);
 
-                    if (strlen(ccp) >= (sizeof(b) - 1)) {
+                    if (strlen(ccp) >= (b_len - 1)) {
                         pr2serr("argument to '-p=' is too long\n");
                         return SG_LIB_SYNTAX_ERROR;
                     }
-                    strcpy(b, ccp);
-                    xp = (char *)strchr(b, ',');
-                    if (xp)
-                        *xp = '\0';
+                    sg_strscpy(b, ccp, b_len);
+                    for (j = 0; j < b_len; ++j) {
+                        char c = b[j];
+
+                        if (',' == c) {
+                            b[j] = '\0';
+                            xp = b + j;
+                            break;
+                        } else if ('\0' == c)
+                            break;
+                    }
                     lep = acron_search(b);
                     if (NULL == lep) {
                         pr2serr("bad argument to '--page=' no acronyn match "
@@ -9552,21 +9561,30 @@ fetchTemperature(int sg_fd, uint8_t * resp, int max_len, struct opts_t * op,
 static int
 decode_pg_arg(struct opts_t * op)
 {
-    int nn;
+    int nn, k;
     const struct log_elem * lep;
-    char * cp;
+    const char * cp = NULL;
 
     if (isalpha((uint8_t)op->pg_arg[0])) {
         char b[80];
+        static const int b_len = sizeof(b);
 
-        if (strlen(op->pg_arg) >= (sizeof(b) - 1)) {
+        if (strlen(op->pg_arg) >= (b_len - 1)) {
             pr2serr("argument to '--page=' is too long\n");
             return SG_LIB_SYNTAX_ERROR;
         }
-        strcpy(b, op->pg_arg);
-        cp = (char *)strchr(b, ',');
-        if (cp)
-            *cp = '\0';
+        sg_strscpy(b, op->pg_arg, b_len);
+        for (k = 0; k < b_len; ++k) {
+            char c = b[k];
+
+            if (',' == c) {
+                b[k] = '\0';
+                break;
+            } else if ('\0' == c) {
+                cp = b + k;
+                break;
+            }
+        }
         lep = acron_search(b);
         if (NULL == lep) {
             pr2serr("bad argument to '--page=' no acronyn match to "
@@ -9590,7 +9608,7 @@ decode_pg_arg(struct opts_t * op)
     } else { /* numeric arg: either 'pg_num' or 'pg_num,subpg_num' */
         int n;
 
-        cp = (char *)strchr(op->pg_arg, ',');
+        cp = strchr(op->pg_arg, ',');
         n = sg_get_num_nomult(op->pg_arg);
         if ((n < 0) || (n > 63)) {
             pr2serr("Bad argument to '--page='\n");

@@ -405,7 +405,7 @@ scsi_pt_close_device(int device_fd)
     return res;
 }
 
-#if (HAVE_NVME && (! IGNORE_NVME))
+#if (defined(HAVE_NVME) && (! defined(IGNORE_NVME)))
 static bool checked_ev_dsense = false;
 static bool ev_dsense = false;
 #endif
@@ -422,9 +422,9 @@ construct_scsi_pt_obj_with_fd(int dev_fd, int verbose)
     if (ptp) {
         int err;
 
-#if (HAVE_NVME && (! IGNORE_NVME))
+#if (defined(HAVE_NVME) && (! defined(IGNORE_NVME)))
         sg_snt_init_dev_stat(&ptp->dev_stat);
-	/* g++ thinks above call might throw an exception ... */
+        /* g++ thinks above call might throw an exception ... */
         if (! checked_ev_dsense) {
             ev_dsense = sg_get_initial_dsense();
             checked_ev_dsense = true;
@@ -1197,7 +1197,4 @@ do_scsi_pt(struct sg_pt_base * vp, int fd, int time_secs, int verbose)
         return do_scsi_pt_v4(ptp, fd, time_secs, verbose);
     else
         return do_scsi_pt_v3(ptp, fd, time_secs, verbose);
-
-    pr2ws("%s: Should never reach this point\n", __func__);
-    return 0;
 }

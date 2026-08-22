@@ -165,7 +165,7 @@
 #define SG_NVME_RW_CONTROL_FUA (1 << 14) /* Force Unit Access bit */
 
 
-#if (HAVE_NVME && (! IGNORE_NVME))
+#if (defined(HAVE_NVME) && (! defined(IGNORE_NVME)))
 
 /* This trims given NVMe block device name in Linux (e.g. /dev/nvme0n1p5)
  * to the name of its associated char device (e.g. /dev/nvme0). If this
@@ -1589,7 +1589,9 @@ sg_do_nvme_pt(struct sg_pt_base * vp, int fd, int time_secs, int vb)
                 return sg_ln_snt_rep_opcodes(ptp, cdbp, time_secs, vb);
             else if (SCSI_REP_SUP_TMFS_OPC == sa)
                 return sg_ln_snt_rep_tmfs(ptp, cdbp, time_secs, vb);
-            /* fall through */
+            // make intent crystal clear, even to compilers
+            goto fallthrough;
+fallthrough:
         default:
 fini:
             if (vb > 2) {
@@ -1629,7 +1631,7 @@ fini:
     return sg_nvme_admin_cmd_f(ptp, &cmd, dp, is_read, time_secs, vb);
 }
 
-#else           /* (HAVE_NVME && (! IGNORE_NVME)) [around line 140] */
+#else /* (defined(HAVE_NVME) && (! defined(IGNORE_NVME))) [around line 140] */
 
 int
 sg_do_nvme_pt(struct sg_pt_base * vp, int fd, int time_secs, int vb)
@@ -1661,9 +1663,9 @@ sg_do_nvme_pt(struct sg_pt_base * vp, int fd, int time_secs, int vb)
     return -inapprop_errno;
 }
 
-#endif          /* (HAVE_NVME && (! IGNORE_NVME)) */
+#endif          /* (defined(HAVE_NVME) && (! defined(IGNORE_NVME))) */
 
-#if (HAVE_NVME && (! IGNORE_NVME))
+#if (defined(HAVE_NVME) && (! defined(IGNORE_NVME)))
 
 int
 do_nvm_pt(struct sg_pt_base * vp, int submq, int timeout_secs, int vb)
@@ -1709,7 +1711,7 @@ do_nvm_pt(struct sg_pt_base * vp, int submq, int timeout_secs, int vb)
     return do_nvm_pt_low(ptp, &cmd, dp, dlen, is_read, timeout_secs, vb);
 }
 
-#else           /* (HAVE_NVME && (! IGNORE_NVME)) */
+#else           /* (defined(HAVE_NVME) && (! defined(IGNORE_NVME))) */
 
 int
 do_nvm_pt(struct sg_pt_base * vp, int submq, int timeout_secs, int vb)
@@ -1734,4 +1736,4 @@ do_nvm_pt(struct sg_pt_base * vp, int submq, int timeout_secs, int vb)
     return SCSI_PT_DO_NOT_SUPPORTED;
 }
 
-#endif          /* (HAVE_NVME && (! IGNORE_NVME)) */
+#endif          /* (defined(HAVE_NVME) && (! defined(IGNORE_NVME))) */

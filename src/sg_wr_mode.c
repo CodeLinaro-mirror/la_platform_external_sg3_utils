@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2023 Douglas Gilbert.
+ * Copyright (c) 2004-2026 Douglas Gilbert.
  * All rights reserved.
  * Use of this source code is governed by a BSD-style
  * license that can be found in the BSD_LICENSE file.
@@ -32,7 +32,7 @@
  * mode page on the given device.
  */
 
-static const char * version_str = "1.32 20230901";
+static const char * version_str = "1.33 20260821";
 
 #define ME "sg_wr_mode: "
 
@@ -124,8 +124,8 @@ build_mode_page(const char * inp, bool is_file, bool as_binary,
     int in_len, k;
     unsigned int h;
     const char * lcp;
-    char * cp;
-    char * c2p;
+    const char * cp;
+    const char * c2p;
 
     if ((NULL == inp) || (NULL == mp_arr) ||
         (NULL == mp_arr_len))
@@ -151,8 +151,8 @@ build_mode_page(const char * inp, bool is_file, bool as_binary,
                     return SG_LIB_SYNTAX_ERROR;
                 }
                 mp_arr[k] = h;
-                cp = (char *)strchr(lcp, ',');
-                c2p = (char *)strchr(lcp, ' ');
+                cp = strchr(lcp, ',');
+                c2p = strchr(lcp, ' ');
                 if (NULL == cp)
                     cp = c2p;
                 if (NULL == cp)
@@ -185,8 +185,8 @@ build_mask(const char * inp, bool is_file, bool as_binary,
     int in_len, k;
     unsigned int h;
     const char * lcp;
-    char * cp;
-    char * c2p;
+    const char * cp;
+    const char * c2p;
 
     if ((NULL == inp) || (NULL == mask_arr) ||
         (NULL == mask_arr_len))
@@ -213,8 +213,8 @@ build_mask(const char * inp, bool is_file, bool as_binary,
                     return 1;
                 }
                 mask_arr[k] = h;
-                cp = (char *)strchr(lcp, ',');
-                c2p = (char *)strchr(lcp, ' ');
+                cp = strchr(lcp, ',');
+                c2p = strchr(lcp, ' ');
                 if (NULL == cp)
                     cp = c2p;
                 if (NULL == cp)

@@ -35,7 +35,7 @@
  * device and decodes the response. Based on spc5r19.pdf
  */
 
-static const char * version_str = "1.09 20260430";
+static const char * version_str = "1.10 20260821";
 
 static const char * my_name = "sg_write_attr: ";
 
@@ -440,8 +440,8 @@ parse_hex_string(const char * inp, uint8_t * arr, int * arr_len,
         int in_len, k;
         unsigned int h;
         const char * lcp;
-        char * cp;
-        char * c2p;
+        const char * cp;
+        const char * c2p;
 
         if ((NULL == inp) || (NULL == arr) || (NULL == arr_len))
                 return SG_LIB_LOGIC_ERROR;
@@ -466,8 +466,8 @@ parse_hex_string(const char * inp, uint8_t * arr, int * arr_len,
                                 return SG_LIB_SYNTAX_ERROR;
                         }
                         arr[k] = h;
-                        cp = (char *)strchr(lcp, ',');
-                        c2p = (char *)strchr(lcp, ' ');
+                        cp = strchr(lcp, ',');
+                        c2p = strchr(lcp, ' ');
                         if (NULL == cp)
                                 cp = c2p;
                         if (NULL == cp)
@@ -515,13 +515,13 @@ sg_put_unaligned_be(void *dst, const void *src, const size_t len)
             *pdst = *psrc;
             break;
         case sizeof(uint16_t):
-            sg_put_unaligned_be16(*((uint16_t *)src), dst);
+            sg_put_unaligned_be16(*((const uint16_t *)src), dst);
             break;
         case sizeof(uint32_t):
-            sg_put_unaligned_be32(*((uint32_t *)src), dst);
+            sg_put_unaligned_be32(*((const uint32_t *)src), dst);
             break;
         case sizeof(uint64_t):
-            sg_put_unaligned_be64(*((uint64_t *)src), dst);
+            sg_put_unaligned_be64(*((const uint64_t *)src), dst);
             break;
         default:
 #if defined(__LITTLE_ENDIAN__) || (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)

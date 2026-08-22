@@ -39,7 +39,7 @@
  * commands tailored for SES (enclosure) devices.
  */
 
-static const char * version_str = "2.89 20260725";    /* ses4r05 */
+static const char * version_str = "2.90 20260821";    /* ses4r05 */
 
 #define MY_NAME "sg_ses"
 
@@ -1524,7 +1524,8 @@ parse_cmd_line(struct opts_t *op, int argc, char *argv[])
             }
             if (op->num_cgs < CGS_CL_ARR_MAX_SZ) {
                 op->cgs_cl_arr[op->num_cgs].cgs_sel = CLEAR_OPT;
-                strcpy(op->cgs_cl_arr[op->num_cgs].cgs_str, optarg);
+                sg_strscpy(op->cgs_cl_arr[op->num_cgs].cgs_str, optarg,
+                           CGS_STR_MAX_SZ);
                 ++op->num_cgs;
             } else {
                 pr2serr("Too many --clear=, --get= and --set= options "
@@ -1569,7 +1570,8 @@ parse_cmd_line(struct opts_t *op, int argc, char *argv[])
             }
             if (op->num_cgs < CGS_CL_ARR_MAX_SZ) {
                 op->cgs_cl_arr[op->num_cgs].cgs_sel = GET_OPT;
-                strcpy(op->cgs_cl_arr[op->num_cgs].cgs_str, optarg);
+                sg_strscpy(op->cgs_cl_arr[op->num_cgs].cgs_str, optarg,
+                           CGS_STR_MAX_SZ);
                 ++op->num_cgs;
             } else {
                 pr2serr("Too many --clear=, --get= and --set= options "
@@ -1706,7 +1708,8 @@ parse_cmd_line(struct opts_t *op, int argc, char *argv[])
             }
             if (op->num_cgs < CGS_CL_ARR_MAX_SZ) {
                 op->cgs_cl_arr[op->num_cgs].cgs_sel = SET_OPT;
-                strcpy(op->cgs_cl_arr[op->num_cgs].cgs_str, optarg);
+                sg_strscpy(op->cgs_cl_arr[op->num_cgs].cgs_str, optarg,
+                           CGS_STR_MAX_SZ);
                 ++op->num_cgs;
             } else {
                 pr2serr("Too many --clear=, --get= and --set= options "
@@ -3513,9 +3516,9 @@ enc_status_helper(const char * pad, const uint8_t * statp, int etype,
             break;
         case 2:
             ccp = rsv_s;
-            /* fallthrough fall-through */
-            // [[fallthrough]];
-            /* FALLTHRU */
+            // make intent crystal clear, even to compilers
+            goto fallthrough;
+fallthrough:
         case 3:
             n += sg_scn3pr(a, alen, n, "%s%s, last 3 bytes (hex): %02x "
                            "%02x %02x\n", pad, ccp, s1, s2, s3);
@@ -4332,12 +4335,12 @@ threshold_helper(const char * header, const char * pad, const uint8_t *tp,
         if (header)
             sgj_pr_hr(jsp, "%s", header);
         if (0 == t2)
-            strcpy(b2, "<vendor>");
+            sg_strscpy(b2, "<vendor>", b2len);
         else
             snprintf(b2, b2len, "%d", t2);
         snprintf(b, blen, "%slow warning=%s, ", pad, b2);
         if (0 == t3)
-            strcpy(b3, "<vendor>");
+            sg_strscpy(b3, "<vendor>", b3len);
         else
             snprintf(b3, b3len, "%d", t3);
         sgj_pr_hr(jsp, "%slow critical=%s (in minutes)\n", b, b3);
@@ -5888,8 +5891,8 @@ read_hex(const char * inp, uint8_t * arr, int mx_arr_len, int * arr_len,
     int in_len, e, k, j, m, off, off_fn;
     unsigned int h;
     const char * lcp;
-    char * cp;
-    char * c2p;
+    const char * cp;
+    const char * c2p;
     char line[512];
     char carry_over[4];
     FILE * fp = NULL;
@@ -6070,8 +6073,8 @@ read_hex(const char * inp, uint8_t * arr, int mx_arr_len, int * arr_len,
                     goto err_with_fp;
                 }
                 arr[k] = h;
-                cp = (char *)strchr(lcp, ',');
-                c2p = (char *)strchr(lcp, ' ');
+                cp = strchr(lcp, ',');
+                c2p = strchr(lcp, ' ');
                 if (NULL == cp)
                     cp = c2p;
                 if (NULL == cp)
@@ -7947,7 +7950,7 @@ main(int argc, char * argv[])
         goto err_out;
     }
 
-#if (HAVE_NVME && (! IGNORE_NVME))
+#if (defined(HAVE_NVME) && (! defined(IGNORE_NVME)))
     if (ptvp && pt_device_is_nvme(ptvp) && (enc_stat_rsp_sz > 4095)) {
         /* Fetch VPD 0xde (vendor specific: sg3_utils) for Identify ctl */
         ret = sg_ll_inquiry_pt(ptvp, true, 0xde, enc_stat_rsp, 4096, 0,

@@ -3,11 +3,13 @@ some description at the top of its ".c" file. All utilities in the src
 directory have their own "man" pages. There is also a sg3_utils man page.
 References to github are to https://github.com/doug-gilbert/sg3_utils
 
-ChangeLog for pre-release sg3_utils-1.49.5 [20260813] [svn: r1141]
+ChangeLog for pre-release sg3_utils-1.49.5 [20260822] [svn: r1142]
   Start with 3 part version number at .5 to leave room for any
   serious bug fixes to use .1 through .4
   - bump version numbers for important files like configure.ac
   - cmake fine tuning by Daniel Engberg [github PR# 90]
+    - add IGNORE_LOCAL_LIB option to skip building the lib
+      directory, utilities will search system lib directories
   - revisit sg_strscpy() invocations, associated fixes to
     sg_get_config, sg_opcodes and sg_ses
   - sg_logs: correct man page read-only option. From Chris
@@ -15,6 +17,9 @@ ChangeLog for pre-release sg3_utils-1.49.5 [20260813] [svn: r1141]
   - sg_modes: suggest adding --dbd after illegal request
   - sg_vpd_vendor: decode_vpd_c0_hp3par: add bounds checks and
     safe string printing, github #93
+  - lib/getopt.h: add extern "C" {} guard
+  - cmake: experiment with compiler specific warning flags
+  - clang/clang++ inspired warning fixes (lots of them)
 
 ChangeLog for release sg3_utils-1.49 [20260718] [svn: r1133]
   Utility specific changes:

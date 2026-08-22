@@ -1,5 +1,5 @@
 /* A utility program originally written for the Linux OS SCSI subsystem.
- *  Copyright (C) 2004-2023 D. Gilbert
+ *  Copyright (C) 2004-2026 D. Gilbert
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2, or (at your option)
@@ -35,7 +35,7 @@
 #include "sg_unaligned.h"
 #include "sg_pr2serr.h"
 
-static const char * version_str = "0.73 20230622";
+static const char * version_str = "0.74 20260821";
 static const char * my_name = "sg_persist: ";
 
 
@@ -886,8 +886,8 @@ build_transportid(const char * inp, struct opts_t * op)
     unsigned int h;
     const char * lcp;
     uint8_t * tid_arr = op->transportid_arr;
-    char * cp;
-    char * c2p;
+    const char * cp;
+    const char * c2p;
 
     lcp = inp;
     in_len = strlen(inp);
@@ -918,8 +918,8 @@ build_transportid(const char * inp, struct opts_t * op)
                     return 1;
                 }
                 tid_arr[k] = h;
-                cp = (char *)strchr(lcp, ',');
-                c2p = (char *)strchr(lcp, ' ');
+                cp = strchr(lcp, ',');
+                c2p = strchr(lcp, ' ');
                 if (NULL == cp)
                     cp = c2p;
                 if (NULL == cp)

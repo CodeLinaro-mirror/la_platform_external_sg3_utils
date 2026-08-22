@@ -430,12 +430,9 @@ do_scsi_io(struct scsi_cmnd_io * sio)
     switch (res) {
     case SG_LIB_CAT_RECOVERED:
         sg_chk_n_print3("do_scsi_cmd, continuing", &io_hdr, true);
-#if defined(__GNUC__)
-#if (__GNUC__ >= 7)
-        __attribute__((fallthrough));
-        /* FALL THROUGH */
-#endif
-#endif
+        // make intent crystal clear, even to compilers
+        goto fallthrough;
+fallthrough:
     case SG_LIB_CAT_CLEAN:
         return 0;
     default:

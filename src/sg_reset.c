@@ -1,9 +1,5 @@
 /* A utility program originally written for the Linux OS SCSI subsystem.
- *  Copyright (C) 1999-2023 D. Gilbert
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
+ *  Copyright (C) 1999-2026 D. Gilbert
  *
  * SPDX-License-Identifier: GPL-2.0-or-later
  *
@@ -33,7 +29,7 @@
 
 #define ME "sg_reset: "
 
-static const char * version_str = "0.69 20230622";
+static const char * version_str = "0.70 20260821";
 
 #ifndef SG_SCSI_RESET
 #define SG_SCSI_RESET 0x2284
@@ -271,12 +267,9 @@ int main(int argc, char * argv[])
             break;
         case EINVAL:
             pr2serr(ME "SG_SCSI_RESET not supported (for value=0x%x)\n", k);
-#if defined(__GNUC__)
-#if (__GNUC__ >= 7)
-            __attribute__((fallthrough));
-            /* FALL THROUGH */
-#endif
-#endif
+            // make intent crystal clear, even to compilers
+            goto fallthrough;
+fallthrough:
         default:
             perror(ME "SG_SCSI_RESET failed");
             break;

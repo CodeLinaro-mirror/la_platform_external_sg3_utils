@@ -22,7 +22,7 @@
  * standards. Note the version string below applies to the whole library.
  */
 
-const char * const sg_lib_version_str = "3.19 20260717";
+const char * const sg_lib_version_str = "3.20 20260818";
 /* spc7r05, sbc6r02, zbc3r06 */
 
 
@@ -1683,7 +1683,7 @@ const struct sg_lib_value_name_t sg_lib_scsi_feature_sets[] =
     {0x0, 0, NULL},     /* 0x0 is reserved sfs; trailing sentinel */
 };
 
-#if (SG_SCSI_STRINGS && HAVE_NVME && (! IGNORE_NVME))
+#if (SG_SCSI_STRINGS && HAVE_NVME && (! defined(IGNORE_NVME)))
 
 /* Commands sent to the NVMe Admin Queue (queue id 0) have the following
  * names in the NVM Express 1.3a document dated 20171024 */
@@ -2037,7 +2037,7 @@ const struct sg_value_2names_t sg_exit_str_arr[] = {
     {0xffff, NULL, NULL},       /* end marking sentinel */
 };
 
-#else           /* (SG_SCSI_STRINGS && HAVE_NVME && (! IGNORE_NVME)) */
+#else      /* (SG_SCSI_STRINGS && HAVE_NVME && (! defined(IGNORE_NVME))) */
 
 const struct sg_lib_simple_value_name_t sg_lib_nvme_admin_cmd_arr[] =
 {
@@ -2071,4 +2071,4 @@ const struct sg_value_2names_t sg_exit_str_arr[] = {
     {0xffff, NULL, NULL},       /* end marking sentinel */
 };
 
-#endif           /* (SG_SCSI_STRINGS && HAVE_NVME && (! IGNORE_NVME)) */
+#endif     /* (SG_SCSI_STRINGS && HAVE_NVME && (! defined(IGNORE_NVME))) */

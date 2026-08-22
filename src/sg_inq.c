@@ -50,14 +50,14 @@
 #include "sg_pt.h"
 #include "sg_unaligned.h"
 #include "sg_pr2serr.h"
-#if (HAVE_NVME && (! IGNORE_NVME))
+#if (defined(HAVE_NVME) && (! defined(IGNORE_NVME)))
 #include "sg_nvme.h"
 #include "sg_snt.h"
 #endif
 
 #include "sg_vpd_common.h"  /* for shared VPD page processing with sg_vpd */
 
-static const char * version_str = "2.65 20260713";  /* spc7r05, sbc6r02 */
+static const char * version_str = "2.66 20260821";  /* spc7r05, sbc6r02 */
 
 #define MY_NAME "sg_inq"
 
@@ -1842,7 +1842,9 @@ decode_b0_vpd(uint8_t * buff, int len, struct opts_t * op, sgj_opaque_p jop)
             vpd_pp = osdi_vpdp;
             break;
         }
-        /* fall-through */
+        // make intent crystal clear, even to compilers
+        goto fallthrough;
+fallthrough:
     default:
         pr2serr("  Unable to decode pdt=0x%x, in hex:\n", pdt);
         hex2stderr(buff, len, 0);
@@ -3550,7 +3552,7 @@ out:
     return res;
 }
 
-#if (HAVE_NVME && (! IGNORE_NVME))
+#if (defined(HAVE_NVME) && (! defined(IGNORE_NVME)))
 
 static void
 nvme_hex_raw(const uint8_t * b, int b_len, const struct opts_t * op)
@@ -4016,7 +4018,7 @@ err_out:
     free(free_id_dinp);
     return ret;
 }
-#endif          /* (HAVE_NVME && (! IGNORE_NVME)) */
+#endif          /* (defined(HAVE_NVME) && (! defined(IGNORE_NVME))) */
 
 
 int
@@ -4465,7 +4467,7 @@ main(int argc, char * argv[])
         goto err_out;
     }
 
-#if (HAVE_NVME && (! IGNORE_NVME))
+#if (defined(HAVE_NVME) && (! defined(IGNORE_NVME)))
     if (pt_device_is_nvme(ptvp)) {   /* NVMe char or NVMe block */
         op->possible_nvme = true;
         if (! op->page_given) {

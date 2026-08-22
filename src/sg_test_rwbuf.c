@@ -1,7 +1,7 @@
 /*
  * (c) 2000 Kurt Garloff
  * heavily based on Douglas Gilbert's sg_rbuf program.
- * (c) 1999-2023 Douglas Gilbert
+ * (c) 1999-2026 Douglas Gilbert
  *
  * Program to test the SCSI host adapter by issuing
  * write and read operations on a device's buffer
@@ -47,7 +47,7 @@
 #include "sg_pr2serr.h"
 
 
-static const char * version_str = "1.23 20230623";
+static const char * version_str = "1.24 20260821";
 
 #define BPI (signed)(sizeof(int))
 
@@ -126,14 +126,11 @@ find_out_about_buffer(int sg_fd)
         res = sg_err_category3(&io_hdr);
         switch (res) {
         case SG_LIB_CAT_RECOVERED:
-                sg_chk_n_print3("READ BUFFER descriptor, continuing",
-                                &io_hdr, true);
-#if defined(__GNUC__)
-#if (__GNUC__ >= 7)
-                __attribute__((fallthrough));
-                /* FALL THROUGH */
-#endif
-#endif
+                 sg_chk_n_print3("READ BUFFER descriptor, continuing",
+                                 &io_hdr, true);
+                // make intent crystal clear, even to compilers
+                goto fallthrough;
+fallthrough:
         case SG_LIB_CAT_CLEAN:
                 break;
         default: /* won't bother decoding other categories */
@@ -273,13 +270,11 @@ int read_buffer (int sg_fd, unsigned ssize)
         res = sg_err_category3(&io_hdr);
         switch (res) {
         case SG_LIB_CAT_RECOVERED:
-            sg_chk_n_print3("READ BUFFER data, continuing", &io_hdr, true);
-#if defined(__GNUC__)
-#if (__GNUC__ >= 7)
-            __attribute__((fallthrough));
-            /* FALL THROUGH */
-#endif
-#endif
+                 sg_chk_n_print3("READ BUFFER data, continuing", &io_hdr,
+                                 true);
+                // make intent crystal clear, even to compilers
+                goto fallthrough;
+fallthrough:
         case SG_LIB_CAT_CLEAN:
                 break;
         default: /* won't bother decoding other categories */
@@ -339,13 +334,11 @@ int write_buffer (int sg_fd, unsigned ssize)
         res = sg_err_category3(&io_hdr);
         switch (res) {
         case SG_LIB_CAT_RECOVERED:
-            sg_chk_n_print3("WRITE BUFFER data, continuing", &io_hdr, true);
-#if defined(__GNUC__)
-#if (__GNUC__ >= 7)
-            __attribute__((fallthrough));
-            /* FALL THROUGH */
-#endif
-#endif
+                 sg_chk_n_print3("WRITE BUFFER data, continuing", &io_hdr,
+                                 true);
+                // make intent crystal clear, even to compilers
+                goto fallthrough;
+fallthrough:
         case SG_LIB_CAT_CLEAN:
                 break;
         default: /* won't bother decoding other categories */

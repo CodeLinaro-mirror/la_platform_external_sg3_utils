@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Douglas Gilbert
+ * Copyright (c) 2014-2026 Douglas Gilbert
  * All rights reserved.
  * Use of this source code is governed by a BSD-style
  * license that can be found in the BSD_LICENSE file.
@@ -40,7 +40,7 @@
 #include "sg_unaligned.h"
 #include "sg_pr2serr.h"
 
-static const char * version_str = "1.23 20230623";
+static const char * version_str = "1.24 20260821";
 
 
 #define ME "sg_write_verify: "
@@ -181,7 +181,9 @@ run_scsi_transaction(int sg_fd, const uint8_t *cdbp, int cdb_len,
         case SG_LIB_CAT_ILLEGAL_REQ:
             if (verbose)
                 sg_print_command_len(cdbp, cdb_len);
-            /* FALL THROUGH */
+            // make intent crystal clear, even to compilers
+            goto fallthrough;
+fallthrough:
         case SG_LIB_CAT_PROTECTION:     /* PI failure */
         case SG_LIB_CAT_MISCOMPARE:     /* only in bytchk=1 case */
         default:

@@ -1,4 +1,4 @@
-/*	$NetBSD: getopt.h,v 1.7 2005/02/03 04:39:32 perry Exp $	*/
+/*      $NetBSD: getopt.h,v 1.7 2005/02/03 04:39:32 perry Exp $ */
 
 /*-
  * Copyright (c) 2000 The NetBSD Foundation, Inc.
@@ -48,9 +48,13 @@
 #ifndef _MYPROXY_GETOPT_H_
 #define _MYPROXY_GETOPT_H_
 
-#if !HAVE_GETOPT_LONG
+#ifndef HAVE_GETOPT_LONG
 
 #include <unistd.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /*
  * Gnu like getopt_long() and BSD4.4 getsubopt()/optreset extensions
@@ -65,22 +69,26 @@ extern int optopt;
 extern int opterr;
 
 struct option {
-	/* name of long option */
-	const char *name;
-	/*
-	 * one of no_argument, required_argument, and optional_argument:
-	 * whether option takes an argument
-	 */
-	int has_arg;
-	/* if not NULL, set *flag to val when option found */
-	int *flag;
-	/* if flag not NULL, value to set *flag to; else return value */
-	int val;
+        /* name of long option */
+        const char *name;
+        /*
+         * one of no_argument, required_argument, and optional_argument:
+         * whether option takes an argument
+         */
+        int has_arg;
+        /* if not NULL, set *flag to val when option found */
+        int *flag;
+        /* if flag not NULL, value to set *flag to; else return value */
+        int val;
 };
 
 int getopt_long(int, char * const *, const char *,
     const struct option *, int *);
+
+#ifdef __cplusplus
+}
+#endif
  
-#endif /* !HAVE_GETOPT_LONG */
+#endif /* HAVE_GETOPT_LONG */
 
 #endif /* !_MYPROXY_GETOPT_H_ */

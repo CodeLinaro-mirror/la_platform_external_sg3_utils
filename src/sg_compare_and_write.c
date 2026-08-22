@@ -1,5 +1,5 @@
 /*
-*  Copyright (c) 2012-2023, Kaminario Technologies LTD
+*  Copyright (c) 2012-2026, Kaminario Technologies LTD
 *  All rights reserved.
 *  Redistribution and use in source and binary forms, with or without
 *  modification, are permitted provided that the following conditions are met:
@@ -56,7 +56,7 @@
 #include "sg_unaligned.h"
 #include "sg_pr2serr.h"
 
-static const char * version_str = "1.33 20230618";
+static const char * version_str = "1.34 20260821";
 
 #define DEF_BLOCK_SIZE 512
 #define DEF_NUM_BLOCKS (1)
@@ -424,7 +424,9 @@ sg_ll_compare_and_write(int sg_fd, uint8_t * buff, int blocks,
                         if (verbose)
                                 sg_print_command_len(cawCmd,
                                              COMPARE_AND_WRITE_CDB_SIZE);
-                        /* FALL THROUGH */
+                        // make intent crystal clear, even to compilers
+                        goto fallthrough;
+fallthrough:
                 default:
                         ret = sense_cat;
                         break;

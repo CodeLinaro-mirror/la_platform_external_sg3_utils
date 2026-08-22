@@ -78,7 +78,7 @@
 #include "sg_pr2serr.h"
 #include "sg_pt.h"              /* used to get to SNTL for NVMe devices */
 
-static const char * version_str = "6.53 20260715";
+static const char * version_str = "6.54 20260821";
 
 static const char * my_name = "sg_dd: ";
 
@@ -988,12 +988,10 @@ sg_read_low(uint8_t * buff, int blocks, int64_t from_block,
         }
         if (op->verbose > 0)
             print_cdb_after = true;
-#if defined(__GNUC__)
-#if (__GNUC__ >= 7)
-        __attribute__((fallthrough));
-        /* FALL THROUGH */
-#endif
-#endif
+
+        // make intent crystal clear, even to compilers
+        goto fallthrough;
+fallthrough:
     default:
         ++unrecovered_errs;
         if (op->verbose > 0)
@@ -1088,12 +1086,9 @@ sg_read(uint8_t * buff, int blocks, int64_t from_block, bool * diop,
             goto err_out;
         case SG_LIB_CAT_MEDIUM_HARD:
             may_coe = true;
-#if defined(__GNUC__)
-#if (__GNUC__ >= 7)
-            __attribute__((fallthrough));
-            /* FALL THROUGH */
-#endif
-#endif
+            // make intent crystal clear, even to compilers
+            goto fallthrough;
+fallthrough:
         default:
             if (retries_tmp > 0) {
                 pr2serr(">>> retrying a sgio read, lba=0x%" PRIx64 "\n",

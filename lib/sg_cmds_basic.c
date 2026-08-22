@@ -134,12 +134,9 @@ sg_cmds_process_helper(const char * leadin, int req_din_x, int act_din_x,
     case SG_LIB_CAT_RECOVERED:
     case SG_LIB_CAT_MEDIUM_HARD:
         check_data_in = true;
-#if defined(__GNUC__)
-#if (__GNUC__ >= 7)
-        __attribute__((fallthrough));
-        /* FALL THROUGH */
-#endif
-#endif
+        // make intent crystal clear, even to compilers
+        goto fallthrough;
+fallthrough:
     case SG_LIB_CAT_UNIT_ATTENTION:
     case SG_LIB_CAT_SENSE:
     default:

@@ -926,7 +926,9 @@ decode_b0_vpd(uint8_t * buff, int len, struct opts_t * op, sgj_opaque_p jop)
             vpd_pp = osdi_vpdp;
             break;
         }
-        /* fall-through */
+        // make intent crystal clear, even to compilers
+        goto fallthrough;
+fallthrough:
     default:
         pr2serr("  Unable to decode pdt=0x%x, in hex:\n", pdt);
         hex2stderr(buff, len, no_ascii_4hex(op));

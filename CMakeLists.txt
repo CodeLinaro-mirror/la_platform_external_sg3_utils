@@ -1,6 +1,7 @@
 cmake_minimum_required ( VERSION 3.10 )
 
-project(sg3_utils VERSION 1.49.5 LANGUAGES C)
+## project(sg3_utils VERSION 1.49.5 LANGUAGES C)
+project(sg3_utils VERSION 1.49.5 LANGUAGES C CXX)
 # releases have one decimal point (e.g. 1.49)
 # start new additions after release at '.5' (e.g. 1.49.5)
 # correction and pre-release versions have two decimal points
@@ -15,14 +16,20 @@ set ( CMAKE_C_STANDARD_REQUIRED ON )
 set ( CMAKE_C_EXTENSIONS OFF )
 set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -W" )
 
-add_compile_definitions ( _LARGEFILE64_SOURCE _FILE_OFFSET_BITS=64 HAVE_CONFIG_H )
-
 # The C code in this package can be compiled as C++ with a few additions
 # such as un-commenting the 2 lines below and adding CXX to the LANGUAGES
-# section of the project() statement above. Additionally see the C++
-# comments in the CMakeLists.txt scripts in the lib and src directories.
-# set ( CMAKE_CXX_STANDARD 23 )
-# set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -W" )
+# section of the project() statement above. Also un-comment the
+# set_source_files_properties() line in the my_language_choice() function
+# a few lines down.
+set ( CMAKE_CXX_STANDARD 23 )
+set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -W" )
+
+function(my_language_choice items)
+    foreach(it IN LISTS items)
+         # Comment out the next line for C compiler, uncomment it for C++
+         set_source_files_properties( ${it} PROPERTIES LANGUAGE CXX )
+    endforeach()
+endfunction (my_language_choice)
 
 string(TIMESTAMP BUILD_TIME "%Y%m%d %H:%M:%S")
 
@@ -36,6 +43,7 @@ option ( DISABLE_NVME_SUPP "remove all or most NVMe code" OFF)
 option ( DISABLE_LINUX_SGV4 "for Linux sg driver avoid v4 interface even if available" OFF)
 option ( DISABLE_LINUXBSG "option ignored, this is placeholder" OFF)
 option ( DISABLE_LIBSGUTILS "Library code compiled in directly" OFF)
+option ( IGNORE_LOCAL_LIB "Utilities will look in system library directories" OFF)
 
 # The intention is to support both cmake _and_ GNU Autotools build systems.
 # To this end (and to shorten the actual compile line) a dynamic config.h
@@ -53,7 +61,7 @@ option ( DISABLE_LIBSGUTILS "Library code compiled in directly" OFF)
 # (if any). To achieve this for cmake, a _permanent_ config.h.in.cmake file
 # has been added to the project for this cmake line (in CMakeLists.txt):
 #    configure_file( config.h.in.cmake config.h )
-# and that generates a suitable config.h . Clear?
+# and that generates a suitable config.h .
 #
 # Currently the only parameters (a define in C) that go through the compile
 # line are DEBUG (more precisely '-DDEBUG' will appear on the compile line
@@ -249,12 +257,81 @@ else()
     message(STATUS "Unknown system: ${CMAKE_SYSTEM_NAME}")
 endif()
 
+set(COMP_GCC 0)
+set(COMP_CLANG 0)
+set(COMP_MSVC 0)
+set(COMP_UNKNOWN 0)
+
+message(STATUS "CMAKE_C_COMPILER     = ${CMAKE_C_COMPILER}")
+message(STATUS "CMAKE_C_COMPILER_ID  = ${CMAKE_C_COMPILER_ID}")
+message(STATUS "CMAKE_C_COMPILER_VERSION = ${CMAKE_C_COMPILER_VERSION}")
+
+if ( $ENV{CC} MATCHES "gcc" )
+    MESSAGE( STATUS ">> GCC compiler selected [ev]" )
+    set(COMP_GCC 1)
+elseif ( $ENV{CC} MATCHES "clang" )
+    MESSAGE( STATUS ">> CLANG compiler selected [ev]" )
+    set(COMP_CLANG 1)
+elseif ( CMAKE_C_COMPILER_ID MATCHES "GNU" )
+    MESSAGE( STATUS ">> GCC compiler detected" )
+    set(COMP_GCC 1)
+elseif (CMAKE_C_COMPILER_ID MATCHES "Clang")
+    MESSAGE( STATUS ">> CLANG compiler detected" )
+    set(COMP_CLANG 1)
+elseif ( MSVC )
+    MESSAGE( STATUS ">> MSVC compiler detected" )
+    set(COMP_MSVC 1)
+else ()
+    MESSAGE( STATUS ">> did NOT detect compiler" )
+    set(COMP_UNKNOWN 1)
+endif ()
+
+if (MSVC)
+    add_compile_definitions ( HAVE_CONFIG_H )
+else ()
+    add_compile_definitions ( _LARGEFILE64_SOURCE _FILE_OFFSET_BITS=64 HAVE_CONFIG_H )
+endif ()
+
+function ( set_compile_options util_name )
+
+    # For testing it can be useful to compile C code with a C++ compiler.
+    # That can be done by uncommenting the following line:
+    # set_source_files_properties( ${util_name} PROPERTIES LANGUAGE CXX )
+
+    if ( ENABLE_DEBUG )
+        target_compile_definitions(${util_name} PRIVATE DEBUG)
+        if ( COMP_GCC )
+            target_compile_options(${util_name} PRIVATE
+                -Wextra -Wmisleading-indentation -Wduplicated-cond -Wlogical-op
+                -Wnull-dereference -Wshadow -Wunused -Wsizeof-array-argument
+                -Wduplicated-branches -Wparentheses)
+                # -Wjump-misses-init is C++ only
+        elseif ( COMP_CLANG )
+            target_compile_options(${util_name} PRIVATE
+                -Wextra -Wshadow
+                -Wnull-dereference -Wdouble-promotion -Wformat=2 -Wundef
+                -Wimplicit-fallthrough -Woverloaded-virtual -Wnon-virtual-dtor
+                -Wcast-align -Wcast-qual -Wunused -Wno-deprecated
+                -Wunreachable-code)
+                # -Wpedantic -Wconversion -Wsign-conversion -Wold-style-cast
+                # -Weverything # generates way too much nitpicking
+        elseif ( COMP_MSVC )
+            # MESSAGE( STATUS ">> MSVC compiler detected" )
+        else ()
+            # MESSAGE( STATUS ">> did NOT detect compiler" )
+        endif ()
+    endif ( ENABLE_DEBUG )
+
+endfunction ( set_compile_options )
+
 configure_file( ${CMAKE_SOURCE_DIR}/config.h.in.cmake ${CMAKE_BINARY_DIR}/config.h )
 
 
 add_subdirectory( include )
 
-add_subdirectory( lib )
+if ( NOT IGNORE_LOCAL_LIB )
+    add_subdirectory( lib )
+endif ( NOT IGNORE_LOCAL_LIB )
 
 add_subdirectory( src )
 

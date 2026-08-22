@@ -32,7 +32,7 @@
 #include "sg_pr2serr.h"
 #include "sg_pr2serr.h"
 
-#if (HAVE_NVME && (! IGNORE_NVME))
+#if (defined(HAVE_NVME) && (! defined(IGNORE_NVME)))
 #include "sg_nvme.h"
 #include "sg_snt.h"
 
@@ -1040,4 +1040,4 @@ sg_snt_resp_rluns(struct sg_snt_dev_state_t * dsp, const uint8_t * cdbp,
     return n;
 }
 
-#endif          /* (HAVE_NVME && (! IGNORE_NVME)) */
+#endif          /* (defined(HAVE_NVME) && (! defined(IGNORE_NVME))) */

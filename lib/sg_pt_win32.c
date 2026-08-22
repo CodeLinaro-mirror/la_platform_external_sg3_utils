@@ -391,7 +391,7 @@ scsi_pt_open_flags(const char * device_name, int flags, int vb)
     /* unlock */
     index = k;
     shp = handle_arr + index;
-#if (HAVE_NVME && (! IGNORE_NVME))
+#if (defined(HAVE_NVME) && (! defined(IGNORE_NVME)))
     sg_snt_init_dev_stat(&shp->dev_stat);
 #endif
     adapter_num = 0;
@@ -666,7 +666,7 @@ check_pt_file_handle(int device_fd, const char * device_name, int vb)
     /* SCSI generic pass-though device: 1 */
 }
 
-#if (HAVE_NVME && (! IGNORE_NVME))
+#if (defined(HAVE_NVME) && (! defined(IGNORE_NVME)))
 static bool checked_ev_dsense = false;
 static bool ev_dsense = false;
 #endif
@@ -704,7 +704,7 @@ construct_scsi_pt_obj_with_fd(int dev_fd, int vb)
         if (shp) {
             psp->is_nvme = shp->is_nvme;
             psp->dev_statp = &shp->dev_stat;
-#if (HAVE_NVME && (! IGNORE_NVME))
+#if (defined(HAVE_NVME) && (! defined(IGNORE_NVME)))
             sg_snt_init_dev_stat(psp->dev_statp);
             if (! checked_ev_dsense) {
                 ev_dsense = sg_get_initial_dsense();
@@ -1484,7 +1484,7 @@ get_scsi_pt_os_err_str(const struct sg_pt_base * vp, int max_b_len, char * b)
     return b;
 }
 
-#if (HAVE_NVME && (! IGNORE_NVME))
+#if (defined(HAVE_NVME) && (! defined(IGNORE_NVME)))
 
 static void
 mk_sense_asc_ascq(struct sg_pt_win32_scsi * psp, int sk, int asc, int ascq,
@@ -3128,7 +3128,7 @@ nvme_pt(struct sg_pt_win32_scsi * psp, struct sg_pt_handle * shp,
     return do_nvme_admin_cmd(psp, shp, NULL, NULL, 0, true, time_secs, vb);
 }
 
-#else           /* (HAVE_NVME && (! IGNORE_NVME)) */
+#else           /* (defined(HAVE_NVME) && (! defined(IGNORE_NVME))) */
 
 static int
 nvme_pt(struct sg_pt_win32_scsi * psp, struct sg_pt_handle * shp,
@@ -3141,7 +3141,7 @@ nvme_pt(struct sg_pt_win32_scsi * psp, struct sg_pt_handle * shp,
     return -ENOTTY;             /* inappropriate ioctl error */
 }
 
-#endif          /* (HAVE_NVME && (! IGNORE_NVME)) */
+#endif          /* (defined(HAVE_NVME) && (! defined(IGNORE_NVME))) */
 
 int
 do_nvm_pt(struct sg_pt_base * vp, int submq, int timeout_secs, int verbose)

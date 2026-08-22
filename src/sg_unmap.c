@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2023 Douglas Gilbert.
+ * Copyright (c) 2009-2026 Douglas Gilbert.
  * All rights reserved.
  * Use of this source code is governed by a BSD-style
  * license that can be found in the BSD_LICENSE file.
@@ -36,7 +36,7 @@
  * logical blocks. Note that DATA MAY BE LOST.
  */
 
-static const char * version_str = "1.24 20231015";
+static const char * version_str = "1.25 20260821";
 static const char * my_name = "sg_unmap: ";
 
 
@@ -129,8 +129,8 @@ build_lba_arr(const char * inp, uint64_t * lba_arr, int * lba_arr_len,
     int in_len, k;
     int64_t ll;
     const char * lcp;
-    char * cp;
-    char * c2p;
+    const char * cp;
+    const char * c2p;
 
     if ((NULL == inp) || (NULL == lba_arr) ||
         (NULL == lba_arr_len))
@@ -152,8 +152,8 @@ build_lba_arr(const char * inp, uint64_t * lba_arr, int * lba_arr_len,
             ll = sg_get_llnum(lcp);
             if (-1 != ll) {
                 lba_arr[k] = (uint64_t)ll;
-                cp = (char *)strchr(lcp, ',');
-                c2p = (char *)strchr(lcp, ' ');
+                cp = strchr(lcp, ',');
+                c2p = strchr(lcp, ' ');
                 if (NULL == cp)
                     cp = c2p;
                 if (NULL == cp)
@@ -187,8 +187,8 @@ build_num_arr(const char * inp, uint32_t * num_arr, int * num_arr_len,
     int in_len, k;
     const char * lcp;
     int64_t ll;
-    char * cp;
-    char * c2p;
+    const char * cp;
+    const char * c2p;
 
     if ((NULL == inp) || (NULL == num_arr) ||
         (NULL == num_arr_len))
@@ -215,8 +215,8 @@ build_num_arr(const char * inp, uint32_t * num_arr, int * num_arr_len,
                     return 1;
                 }
                 num_arr[k] = (uint32_t)ll;
-                cp = (char *)strchr(lcp, ',');
-                c2p = (char *)strchr(lcp, ' ');
+                cp = strchr(lcp, ',');
+                c2p = strchr(lcp, ' ');
                 if (NULL == cp)
                     cp = c2p;
                 if (NULL == cp)

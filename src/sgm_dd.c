@@ -76,7 +76,7 @@
 #include "sg_pr2serr.h"
 
 
-static const char * version_str = "1.32 20260715";
+static const char * version_str = "1.33 20260821";
 
 static const char * my_name = "sgm_dd: ";
 
@@ -654,7 +654,9 @@ sg_read(int sg_fd, uint8_t * buff, int blocks, int64_t from_block,
     case SG_LIB_CAT_ILLEGAL_REQ:
         if (verbose)
             print_cdb_after = true;
-        /* FALL THROUGH */
+        // make intent crystal clear, even to compilers
+        goto fallthrough;
+fallthrough:
     case SG_LIB_CAT_ABORTED_COMMAND:
     case SG_LIB_CAT_UNIT_ATTENTION:
     default:
@@ -756,7 +758,9 @@ sg_write(int sg_fd, uint8_t * buff, int blocks, int64_t to_block,
     case SG_LIB_CAT_ILLEGAL_REQ:
         if (verbose)
             print_cdb_after = true;
-        /* FALL THROUGH */
+        // make intent crystal clear, even to compilers
+        goto fallthrough;
+fallthrough:
     case SG_LIB_CAT_ABORTED_COMMAND:
     case SG_LIB_CAT_UNIT_ATTENTION:
     default:

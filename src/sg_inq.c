@@ -57,7 +57,7 @@
 
 #include "sg_vpd_common.h"  /* for shared VPD page processing with sg_vpd */
 
-static const char * version_str = "2.66 20260821";  /* spc7r05, sbc6r02 */
+static const char * version_str = "2.67 20260902";  /* spc7r05, sbc6r02 */
 
 #define MY_NAME "sg_inq"
 
@@ -1723,7 +1723,7 @@ export_dev_ids(uint8_t * buff, int len, int verbose)
             }
 
             printf("SCSI_IDENT_%s_NAME=", assoc_str);
-            for (m = 0; m < i_len; ++m) {
+            for (m = 0; m < i_len && ip[m]; ++m) {
                 if ((ip[m] >= '0' && ip[m] <= '9') ||
                     (ip[m] >= 'A' && ip[m] <= 'Z') ||
                     (ip[m] >= 'a' && ip[m] <= 'z') ||

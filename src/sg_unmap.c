@@ -71,7 +71,7 @@ static const struct option long_options[] = {
 static void
 usage()
 {
-    pr2serr("Usage: "
+    pr2serr("\nUsage: "
           "sg_unmap [--all=ST,RN[,LA]] [--anchor] [--dry-run] [--force]\n"
           "                [--grpnum=GN] [--help] [--in=FILE] "
           "[--lba=LBA,LBA...]\n"

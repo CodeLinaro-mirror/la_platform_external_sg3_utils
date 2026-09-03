@@ -16,6 +16,12 @@
 #include <ctype.h>
 #include <errno.h>
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#else
+#warning "config.h not found, try to continue"
+#endif
+
 #include "sg_lib.h"
 #include "sg_pr2serr.h"
 
@@ -28,7 +34,7 @@
  * https://www.t10.org/lists/asc-num.txt
  */
 
-static const char * version_str = "1.12 20260321";
+static const char * version_str = "1.13 20260902";
 
 
 #define MAX_LINE_LEN 1024

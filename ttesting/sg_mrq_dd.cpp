@@ -76,6 +76,8 @@ static const char * version_str = "1.48 20260715";
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
+#else
+#warning "config.h not found, try to continue"
 #endif
 
 #ifdef HAVE_GETRANDOM

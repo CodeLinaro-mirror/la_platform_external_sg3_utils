@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2004-2018 D. Gilbert
+ *  Copyright (C) 2004-2026 D. Gilbert
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2, or (at your option)
@@ -18,6 +18,12 @@
 #include <stdint.h>
 #include <string.h>
 #include <getopt.h>
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#else
+#warning "config.h not found, try to continue"
+#endif
 
 #include "sg_lib.h"
 

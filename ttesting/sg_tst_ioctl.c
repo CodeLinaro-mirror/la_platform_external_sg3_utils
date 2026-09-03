@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2018-2022 D. Gilbert
+ *  Copyright (C) 2018-2026 D. Gilbert
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2, or (at your option)
@@ -39,6 +39,12 @@
  * undef __user before doing that include. */
 #define __user
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#else
+#warning "config.h not found, try to continue"
+#endif
+
 /* Want to block the original sg.h header from also being included. That
  * causes lots of multiple definition errors. This will only work if this
  * header is included _before_ the original sg.h header.  */
@@ -60,7 +66,7 @@
  * later of the Linux sg driver.  */
 
 
-static const char * version_str = "Version: 1.21  20220202";
+static const char * version_str = "Version: 1.22  20260902";
 
 #define INQ_REPLY_LEN 128
 #define INQ_CMD_LEN 6

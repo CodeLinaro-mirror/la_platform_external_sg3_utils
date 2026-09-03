@@ -60,6 +60,8 @@
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
+#else
+#warning "config.h not found, try to continue"
 #endif
 
 #ifndef HAVE_LINUX_SG_V4_HDR
@@ -89,7 +91,7 @@
 #include "sg_pt.h"
 #include "sg_cmds.h"
 
-static const char * version_str = "1.44 20260505";
+static const char * version_str = "1.45 20260902";
 static const char * util_name = "sg_tst_async";
 
 /* This is a test program for checking the async usage of the Linux sg

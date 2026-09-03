@@ -1,5 +1,5 @@
 /* A utility program originally written for the Linux OS SCSI subsystem.
- *  Copyright (C) 2021 D. Gilbert
+ *  Copyright (C) 2021-2026 D. Gilbert
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2, or (at your option)
@@ -27,6 +27,8 @@
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
+#else
+#warning "config.h not found, try to continue"
 #endif
 
 #ifndef HAVE_LINUX_SG_V4_HDR
@@ -55,7 +57,7 @@
 
 #define ME "sg_take_snap: "
 
-static const char * version_str = "1.01 20210403";
+static const char * version_str = "1.02 20260902";
 
 #define SG_TAKE_MAX_DEVS 16
 

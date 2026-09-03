@@ -14,7 +14,7 @@ else ( BUILD_SHARED_LIBS )
 endif ( BUILD_SHARED_LIBS )
 
 
-function(build_one util_name source_files)
+function(l_build_one util_name source_files)
 
     if ( NEED_GETOPT_LONG OR NEED_GETOPT_H )
         add_executable( ${util_name} ${source_files} ${CMAKE_SOURCE_DIR}/lib/getopt_long.c )
@@ -25,9 +25,9 @@ function(build_one util_name source_files)
     # For testing it can be useful to compile C code with a C++ compiler. That
     # can be done by uncommenting the following line:
     ## set_source_files_properties( ${util_name} PROPERTIES LANGUAGE CXX )
-    my_language_choice( "${source_files}" )
+    ## l_language_choice( "${source_files}" )
 
-    set_compile_options ( ${util_name} )
+    l_set_compile_options ( ${util_name} )
 
     target_include_directories(${util_name} PRIVATE ${CMAKE_BINARY_DIR})
     target_include_directories(${util_name} PUBLIC ${CMAKE_SOURCE_DIR}/include)
@@ -143,41 +143,41 @@ set ( sg_inq_source
 	sg_vpd_common.c
     )
 # Double quotes make arg2 a semi-colon separated list
-build_one( sg_inq "${sg_inq_source}" )
+l_build_one( sg_inq "${sg_inq_source}" )
 
 set ( sg_logs_source
 	sg_logs.c
 	sg_logs_vendor.c
     )
-build_one( sg_logs "${sg_logs_source}" )
+l_build_one( sg_logs "${sg_logs_source}" )
 
 set ( sg_vpd_source
 	sg_vpd.c
 	sg_vpd_common.c
 	sg_vpd_vendor.c
     )
-build_one( sg_vpd "${sg_vpd_source}" )
+l_build_one( sg_vpd "${sg_vpd_source}" )
 
 
 # For the rest, each utility corresponds to one source file of the same
 # name (apart from the ".c" at the end of the source file).
 foreach(util ${SG3_UTILS})
-    build_one( ${util} ${util}.c )
+    l_build_one( ${util} ${util}.c )
 endforeach()
 
 
 if (SG_LIB_LINUX)
     if (NOT PT_DUMMY)
         foreach(util ${SG3_UTILS_LINUX_ONLY})
-            build_one( ${util} ${util}.c )
+            l_build_one( ${util} ${util}.c )
         endforeach()
 
-        build_one( sg_scan sg_scan_linux.c )
+        l_build_one( sg_scan sg_scan_linux.c )
     endif (NOT PT_DUMMY)
 
 elseif (SG_LIB_WIN32)
     if (NOT PT_DUMMY)
-        build_one( sg_scan sg_scan_win32.c )
+        l_build_one( sg_scan sg_scan_win32.c )
     endif (NOT PT_DUMMY)
 endif (SG_LIB_LINUX)
 

@@ -46,6 +46,8 @@
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
+#else
+#warning "config.h not found, try to continue"
 #endif
 
 #ifndef HAVE_LINUX_SG_V4_HDR
@@ -73,7 +75,7 @@
 #include "sg_io_linux.h"
 #include "sg_unaligned.h"
 
-static const char * version_str = "1.15 20260505";
+static const char * version_str = "1.16 20260902";
 static const char * util_name = "sg_tst_excl";
 
 /* This is a test program for checking O_EXCL on open() works. It uses

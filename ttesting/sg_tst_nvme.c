@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2023 Douglas Gilbert
+ * Copyright (c) 2018-2026 Douglas Gilbert
  * All rights reserved.
  * Use of this source code is governed by a BSD-style
  * license that can be found in the BSD_LICENSE file.
@@ -30,6 +30,8 @@
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
+#else
+#warning "config.h not found, try to continue"
 #endif
 
 #include "sg_lib.h"
@@ -39,7 +41,7 @@
 #include "sg_unaligned.h"
 #include "sg_pr2serr.h"
 
-static const char * version_str = "1.09 20231123";
+static const char * version_str = "1.10 20260902";
 
 
 #define ME "sg_tst_nvme: "

@@ -16,6 +16,12 @@
 #include <ctype.h>
 #include <errno.h>
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#else
+#warning "config.h not found, try to continue"
+#endif
+
 #include "sg_lib.h"
 // #include "sg_lib_data.h"
 #include "sg_lib_names.h"
@@ -31,7 +37,7 @@
  *   https://www.t10.org/lists/stds-num.txt
  */
 
-static const char * version_str = "1.02 20260310";
+static const char * version_str = "1.03 20260902";
 
 
 #define MAX_LINE_LEN 1024

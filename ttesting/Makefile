@@ -17,24 +17,32 @@ BSG_EXTRAS =
 MAN_PGS =
 MAN_PREF = man8
 
-LARGE_FILE_FLAGS = -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -DSG_LIB_LINUX
+LARGE_FILE_FLAGS = -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -DSG_LIB_LINUX -D_REENTRANT
+
+# Check if ../config.h is present
+ifeq ($(shell test -f ../config.h && echo yes),yes)
+    LARGE_FILE_FLAGS += -DHAVE_CONFIG_H
+endif
 
 # For C++/clang testing
 ## CC = gcc
 ## CXX = g++
-## CC = clang
+## CC = clang++
 ## CXX = clang++
 
 LD = $(CXX)
 CXXLD = $(CXX)
 
-CPPFLAGS = -iquote ../include -iquote .. -D_REENTRANT $(LARGE_FILE_FLAGS) -DHAVE_NVME
-### CXXFLAGS = -std=c++11 -pthread -ggdb -O2 -W -Wall -iquote ../include -D_REENTRANT $(LARGE_FILE_FLAGS)
-## CXXFLAGS = -std=c++14 -pthread -ggdb -O2 -W -Wall -iquote ../include -D_REENTRANT $(LARGE_FILE_FLAGS)
-## CXXFLAGS = -std=c++17 -pthread -ggdb -O2 -W -Wall -iquote ../include -D_REENTRANT $(LARGE_FILE_FLAGS)
-## CXXFLAGS = -std=c++20 -pthread -ggdb -O2 -W -Wall -iquote ../include -D_REENTRANT $(LARGE_FILE_FLAGS)
-CXXFLAGS = -std=c++23 -pthread -ggdb -O2 -W -Wall -iquote ../include -D_REENTRANT $(LARGE_FILE_FLAGS)
-# CPPFLAGS = -iquote ../include -iquote .. -D_REENTRANT $(LARGE_FILE_FLAGS) -DHAVE_CONFIG_H -DHAVE_NVME -DDEBUG
+# '-iquote ../include' for this project's includes
+# '-iquote ..' for autotools/cmake produced config.h
+# '-I ../lib' for getopt.h if needed (e.g. if not found in system includes)
+CPPFLAGS = -iquote ../include -iquote .. -I ../lib $(LARGE_FILE_FLAGS)
+### CXXFLAGS = -std=c++11 -pthread -ggdb -O2 -W -Wall -iquote ../include -iquote .. -I ../lib $(LARGE_FILE_FLAGS)
+## CXXFLAGS = -std=c++14 -pthread -ggdb -O2 -W -Wall -iquote ../include -iquote .. -I ../lib $(LARGE_FILE_FLAGS)
+## CXXFLAGS = -std=c++17 -pthread -ggdb -O2 -W -Wall -iquote ../include -iquote .. -I ../lib $(LARGE_FILE_FLAGS)
+## CXXFLAGS = -std=c++20 -pthread -ggdb -O2 -W -Wall -iquote ../include -iquote .. -I ../lib $(LARGE_FILE_FLAGS)
+CXXFLAGS = -std=c++23 -pthread -ggdb -O2 -W -Wall -iquote ../include -iquote .. -I ../lib $(LARGE_FILE_FLAGS)
+# CPPFLAGS = -iquote ../include -iquote .. -I ../lib $(LARGE_FILE_FLAGS) -DDEBUG
 CFLAGS = -g -O2 -W -Wall
 # CFLAGS = -ggdb -O2 -W -Wall -DDEBUG
 # CFLAGS = -g -O2 -Wall -DSG_KERNEL_INCLUDES

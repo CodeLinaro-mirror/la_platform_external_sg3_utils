@@ -26,7 +26,9 @@
 #endif
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"     /* need this to see if HAVE_BYTESWAP_H */
+#include "config.h"
+#else
+#warning "config.h not found, try to continue"
 #endif
 
 #include "sg_lib.h"
@@ -45,7 +47,7 @@
  * related to snprintf().
  */
 
-static const char * version_str = "1.23 20260813";
+static const char * version_str = "1.24 20260902";
 
 
 #define MY_NAME "tst_sg_lib"

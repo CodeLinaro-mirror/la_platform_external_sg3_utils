@@ -44,11 +44,17 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#else
+#warning "config.h not found, try to continue"
+#endif
+
 #include "sg_lib.h"
 #include "sg_pt.h"
 #include "sg_unaligned.h"
 
-static const char * version_str = "1.12 20260505";
+static const char * version_str = "1.13 20260902";
 static const char * util_name = "sg_tst_excl3";
 
 /* This is a test program for checking O_EXCL on open() works. It uses

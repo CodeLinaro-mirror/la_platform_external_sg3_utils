@@ -73,18 +73,19 @@ else ( BUILD_SHARED_LIBS )
     add_library(sgutils2 STATIC ${sgutils2_lib_common} ${sgutils2_lib_hal} )
 endif ( BUILD_SHARED_LIBS )
 
-# my_language_choice() is a function defined in the parent CMakeLists.txt
+# l_language_choice() is a function defined in the parent CMakeLists.txt
 # and takes a list of files to be compiled. It optionally calls
 #    set_source_files_properties(${it} PROPERTIES LANGUAGE CXX)
 # if the intent is to compile this C code with a C++ compiler. That is
 # primarily for more advanced code sanity checking in C++. The usual case
 # is to compile with a C compiler in which case this function does nothing.
 # First we need to build a list of files to be compiled:
-set ( compile_list ${sgutils2_lib_common} )
-list ( APPEND compile_list ${sgutils2_lib_hal} )
-my_language_choice( "${compile_list}" )
+## set ( compile_list ${sgutils2_lib_common} )
+## list ( APPEND compile_list ${sgutils2_lib_hal} )
+## 
+## l_language_choice( "${compile_list}" )
 
-set_compile_options ( sgutils2 )
+l_set_compile_options ( sgutils2 )
 
 target_include_directories(sgutils2
     PUBLIC

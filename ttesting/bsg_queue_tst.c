@@ -11,6 +11,11 @@
 /* If the following fails the Linux kernel is probably too old */
 #include <linux/bsg.h>
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#else
+#warning "config.h not found, try to continue"
+#endif
 
 #include "sg_lib.h"
 #include "sg_io_linux.h"

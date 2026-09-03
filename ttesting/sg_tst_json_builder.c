@@ -22,6 +22,12 @@
 #include <getopt.h>
 #include <errno.h>
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#else
+#warning "config.h not found, try to continue"
+#endif
+
 #include "../lib/sg_json_builder.h"
 #include "sg_lib.h"
 #include "sg_pr2serr.h"
@@ -29,7 +35,7 @@
 
 #define MY_NAME "sg_tst_json_builder"
 
-static const char * version_str = "1.07 20260622";
+static const char * version_str = "1.08 20260902";
 
 
 static struct option long_options[] = {

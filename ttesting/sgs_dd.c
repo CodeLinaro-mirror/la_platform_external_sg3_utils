@@ -1,7 +1,7 @@
 /*
  * Test code for the extensions to the Linux OS SCSI generic ("sg")
  * device driver.
- * Copyright (C) 1999-2022 D. Gilbert and P. Allworth
+ * Copyright (C) 1999-2026 D. Gilbert and P. Allworth
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,6 +77,12 @@
 #define __user
 #endif  /* end of: ifndef HAVE_LINUX_SG_V4_HDR */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#else
+#warning "config.h not found, try to continue"
+#endif
+
 #include "sg_lib.h"
 #include "sg_linux_inc.h"
 #include "sg_io_linux.h"
@@ -84,7 +90,7 @@
 #include "sg_unaligned.h"
 
 
-static const char * version_str = "4.24 20221020";
+static const char * version_str = "4.25 20260902";
 static const char * my_name = "sgs_dd";
 
 #ifndef SGV4_FLAG_POLLED

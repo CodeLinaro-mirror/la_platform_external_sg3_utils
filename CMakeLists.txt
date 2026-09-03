@@ -11,26 +11,6 @@ project(sg3_utils VERSION 1.49.5 LANGUAGES C CXX)
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 
-set ( CMAKE_C_STANDARD 99 )
-set ( CMAKE_C_STANDARD_REQUIRED ON )
-set ( CMAKE_C_EXTENSIONS OFF )
-set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -W" )
-
-# The C code in this package can be compiled as C++ with a few additions
-# such as un-commenting the 2 lines below and adding CXX to the LANGUAGES
-# section of the project() statement above. Also un-comment the
-# set_source_files_properties() line in the my_language_choice() function
-# a few lines down.
-set ( CMAKE_CXX_STANDARD 23 )
-set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -W" )
-
-function(my_language_choice items)
-    foreach(it IN LISTS items)
-         # Comment out the next line for C compiler, uncomment it for C++
-         set_source_files_properties( ${it} PROPERTIES LANGUAGE CXX )
-    endforeach()
-endfunction (my_language_choice)
-
 string(TIMESTAMP BUILD_TIME "%Y%m%d %H:%M:%S")
 
 option ( BUILD_SHARED_LIBS "Build using shared libraries" ON)
@@ -48,25 +28,25 @@ option ( IGNORE_LOCAL_LIB "Utilities will look in system library directories" OF
 # The intention is to support both cmake _and_ GNU Autotools build systems.
 # To this end (and to shorten the actual compile line) a dynamic config.h
 # is constructed to pass user options and detected system characteristics
-# (e.g. is <byteswap.h> present on the standard header search path? ).
-# In Autotools the initial call to autoconf (often in a script called
-# autogen.sh or bootstrap) creates an artifact file call config.h.in
-# (and a script called configure). The next step is to execute that configure
-# script (typically with './configure'), perhaps with some options (to list
-# those options use './configure --help'). Part of the work of configure is
-# to use config.h.in to create config.h . The next step is to compile the
-# code and that code looks for that config.h file. With cmake the goal is to
-# also generate a config.h file which is functionally equivalent to what
-# Autotools generates, given the same environment and command line options
-# (if any). To achieve this for cmake, a _permanent_ config.h.in.cmake file
-# has been added to the project for this cmake line (in CMakeLists.txt):
+# (e.g. is <byteswap.h> present on the standard header search path? ). In
+# Autotools the initial call to autoconf (often in a script called autogen.sh
+# or bootstrap) creates an artifact file call config.h.in (and a script
+# called configure). The next step is to execute that configure script
+# (typically with './configure'), perhaps with some options (to list those
+# options use './configure --help'). Part of the work of configure is to use
+# config.h.in to create config.h . The next step is to compile the code and
+# that code looks for that config.h file. With cmake the goal is to also
+# generate a config.h file which is functionally equivalent to what Autotools
+# generates, given the same environment and command line options (if any). To
+# achieve this for cmake, a _permanent_ config.h.in.cmake file has been added
+# to the project for this cmake line (in CMakeLists.txt):
 #    configure_file( config.h.in.cmake config.h )
 # and that generates a suitable config.h .
 #
-# Currently the only parameters (a define in C) that go through the compile
-# line are DEBUG (more precisely '-DDEBUG' will appear on the compile line
+# Currently the only parameters (#define in C) that go through the compile
+# line are DEBUG (more precisely '-DDEBUG') will appear on the compile line
 # if ENABLE_DEBUG=ON is given (e.g. 'cmake . -DENABLE_DEBUG=ON') and
-# HAVE_CONFIG_H . The rest of the parameters/defines are sent through
+# HAVE_CONFIG_H . The remaining parameters/defines are sent through
 # config.h .
 #
 # So config.h.in.cmake is a "magic" file associated with this cmake
@@ -292,11 +272,13 @@ else ()
     add_compile_definitions ( _LARGEFILE64_SOURCE _FILE_OFFSET_BITS=64 HAVE_CONFIG_H )
 endif ()
 
-function ( set_compile_options util_name )
+function ( l_set_compile_options util_name )
 
     # For testing it can be useful to compile C code with a C++ compiler.
-    # That can be done by uncommenting the following line:
-    # set_source_files_properties( ${util_name} PROPERTIES LANGUAGE CXX )
+    # That can be done by expanding the project() cmake command at the top of
+    # this file to: project( ...... LANGUAGES C CXX) and uncommenting
+    # the following line:
+    set_source_files_properties( ${util_name} PROPERTIES LANGUAGE CXX )
 
     if ( ENABLE_DEBUG )
         target_compile_definitions(${util_name} PRIVATE DEBUG)
@@ -322,7 +304,22 @@ function ( set_compile_options util_name )
         endif ()
     endif ( ENABLE_DEBUG )
 
-endfunction ( set_compile_options )
+endfunction ( l_set_compile_options )
+
+set ( CMAKE_C_STANDARD 99 )
+set ( CMAKE_C_STANDARD_REQUIRED ON )
+set ( CMAKE_C_EXTENSIONS OFF )
+set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -W" )
+
+set ( CMAKE_CXX_STANDARD 23 )
+set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -W" )
+
+## function(l_language_choice items)
+##     foreach(it IN LISTS items)
+##          # Comment out the next line for C compiler, uncomment it for C++
+##          set_source_files_properties( ${it} PROPERTIES LANGUAGE CXX )
+##     endforeach()
+## endfunction (l_language_choice)
 
 configure_file( ${CMAKE_SOURCE_DIR}/config.h.in.cmake ${CMAKE_BINARY_DIR}/config.h )
 
